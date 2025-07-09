@@ -82,3 +82,20 @@ export const loginUser = async (req, res) => {
   }
 };
 
+export const SearchUser = async (req, res) => {
+  const q = req.query.q || "";
+  const users = await User.aggregate([
+    {
+      $search: {
+        index: "userSearch",
+        autocomplete: {
+          query: q,
+          path: "name",
+          fuzzy: { maxEdits: 1 },
+        },
+      },
+    },
+    { $limit: 10 },
+  ]);
+  res.json(users);
+}

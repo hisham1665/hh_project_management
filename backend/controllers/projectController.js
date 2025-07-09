@@ -3,30 +3,34 @@ import User from '../models/user.model.js';
 
 // ✅ Create a new project
 export const createProject = async (req, res) => {
-  const { name, description, userId } = req.body;
+  const { name, description, userId, members } = req.body;
 
   try {
-    // Create project and add creator as the first member
+    // Combine the creator with the members array (avoiding duplicates)
+    const allMembers = Array.from(new Set([userId, ...(members || [])]));
+
+    // Create the project
     const project = await Project.create({
       name,
       description,
       createdBy: userId,
-      members: [userId]
+      members: allMembers,
     });
 
-    // Optionally push to user's createdProjects
+    // Update the user's createdProjects
     await User.findByIdAndUpdate(userId, {
-      $push: { createdProjects: project._id }
+      $push: { createdProjects: project._id },
     });
 
     res.status(201).json({
-      message: 'Project created successfully',
-      project
+      message: "Project created successfully",
+      project,
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
+
 
 // ✅ Get all projects where the user is a member
 export const getUserProjects = async (req, res) => {

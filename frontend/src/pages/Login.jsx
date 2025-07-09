@@ -8,12 +8,49 @@ import {
   InputAdornment,
   IconButton,
   Paper,
+  Alert,
+  CircularProgress,
 } from "@mui/material";
 import { Visibility, VisibilityOff, Lock, Email } from "@mui/icons-material";
 import { motion } from "framer-motion";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(""); // Add this line
+  const {login} = useAuth();
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccess(""); // Clear previous success
+    setLoading(true);
+    try {
+      const response = await axios.post("/api/user/login", { email, password });
+      if (response.status === 200) {
+        console.log("Login successful:", response);
+        login(response.data.user); 
+        setSuccess("Login successful! Redirecting...");
+        setTimeout(() => {
+          navigate("/dashboard");
+        }, 1200); 
+      }
+    } catch (err) {
+      setError(
+        err.response?.data?.message ||
+          "Login failed. Please check your credentials."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <Box
@@ -45,7 +82,17 @@ export default function LoginPage() {
                 Login to your HH Project account
               </Typography>
             </Box>
-            <form>
+            {success && (
+              <Alert severity="success" sx={{ mb: 3 }}>
+                {success}
+              </Alert>
+            )}
+            {error && (
+              <Alert severity="error" sx={{ mb: 3 }}>
+                {error}
+              </Alert>
+            )}
+            <form onSubmit={handleSubmit}>
               <Box mb={4}>
                 <TextField
                   fullWidth
@@ -53,6 +100,8 @@ export default function LoginPage() {
                   variant="outlined"
                   type="email"
                   autoComplete="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
@@ -70,6 +119,8 @@ export default function LoginPage() {
                   variant="outlined"
                   type={showPassword ? "text" : "password"}
                   autoComplete="current-password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
@@ -110,14 +161,18 @@ export default function LoginPage() {
                   color="primary"
                   size="large"
                   fullWidth
+                  disabled={loading}
                   className="!rounded-full !py-3 !text-lg !font-bold !bg-gradient-to-r !from-indigo-500 !to-blue-500 hover:!from-blue-500 hover:!to-indigo-500 !shadow-lg transition"
                   sx={{
                     background:
                       "linear-gradient(90deg, #6366f1 0%, #2563eb 100%)",
                     color: "#fff",
                   }}
+                  startIcon={
+                    loading && <CircularProgress size={22} color="inherit" />
+                  }
                 >
-                  Login
+                  {loading ? "Logging in..." : "Login"}
                 </Button>
               </motion.div>
               <Box mt={6} className="text-center">

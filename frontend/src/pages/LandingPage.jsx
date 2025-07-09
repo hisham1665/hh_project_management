@@ -16,6 +16,7 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext"; // Add this import
 
 // Dummy data for features and testimonials
 const features = [
@@ -96,9 +97,16 @@ const testimonialVariants = {
 
 export default function LandingPage() {
   const navigate = useNavigate();
+  const { user } = useAuth(); // Get user from auth context
+
   function handleButton() {
-    navigate('/login');
+    if (user) {
+      navigate("/dashboard");
+    } else {
+      navigate("/login");
+    }
   }
+
   return (
     <Box className="bg-gradient-to-br from-blue-100 to-blue-300 min-h-screen flex flex-col">
       {/* Navbar */}
