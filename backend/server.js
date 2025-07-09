@@ -5,6 +5,8 @@ import path from 'path';
 import cors from 'cors';
 import { Connectdb } from './config/db.js';
 import Userrouter from './routes/userRoutes.js';
+import Projectrouter from './routes/projectRoutes.js';
+import Taskrouter from './routes/taskRoutes.js';
 dotenv.config()
 const app = express();
 
@@ -16,7 +18,8 @@ const __dirname = path.resolve();
 app.use(express.json())
 
 app.use("/api/user/" ,Userrouter);
-
+app.use("/api/project/", Projectrouter);
+app.use("/api/task/" , Taskrouter);
 app.listen(5000, ()=> {
   Connectdb()
     console.log("server run at http://localhost:5000")
