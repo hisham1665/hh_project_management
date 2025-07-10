@@ -10,8 +10,9 @@ import {
   Box,
 } from "@mui/material";
 import { motion } from "framer-motion";
-
+import { useNavigate } from "react-router-dom";
 export default function Dashboard() {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -73,7 +74,9 @@ export default function Dashboard() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: i * 0.1 }}
             >
-              <Box className="bg-white rounded-xl p-6 shadow border border-gray-200">
+              <Box className="bg-white rounded-xl p-6 shadow border border-gray-200"  onClick={() =>
+                  navigate(`project/${proj._id}`, { state: { project: proj, allProjects: projects } })
+                }> 
                 <Typography variant="h6" className="!text-blue-800 !font-bold">
                   {proj.name}
                 </Typography>

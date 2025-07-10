@@ -6,7 +6,9 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import Dashboard from "./pages/Dashboard";
 import AccessRoute from "./components/AccessRoutes";
 import NotFound from "./pages/NotFound";
-import MainLayout from "./components/MainLayou";
+import MainLayout from "./components/MainLayout";
+
+import ProjectDashboard from "./components/ProjectDashboard/ProjectDashboard";
 function App() {
 
   return (
@@ -15,10 +17,10 @@ function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
-        {/* <Route path="/signup" element={<SignUpPage />} /> */}
-       <Route path="/dashboard" element={<AccessRoute requireAuth={true} redirectTo="/404" ><MainLayout /></AccessRoute>} >
-        <Route index element={<Dashboard />} />
-       </Route> 
+        <Route path="/dashboard" element={<AccessRoute requireAuth={true} redirectTo="/404" ><MainLayout /></AccessRoute>} >
+          <Route index element={<Dashboard />} />
+          <Route path="project/:id" element={<ProjectDashboard/>} />
+        </Route> 
         <Route path="*" element={<NotFound/>} />
       </Routes>
     </Router>
