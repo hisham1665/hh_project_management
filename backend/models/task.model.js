@@ -31,7 +31,12 @@ const taskSchema = new Schema({
   assignedTo: { 
     type: Schema.Types.ObjectId, 
     ref: 'User' 
-}, // optional
+}, 
+  comments: [{
+    user: { type: Schema.Types.ObjectId, ref: 'User' },
+    comment: String,
+    createdAt: { type: Date, default: Date.now }
+  }],
   dueDate: Date,
 }, { timestamps: true });
 

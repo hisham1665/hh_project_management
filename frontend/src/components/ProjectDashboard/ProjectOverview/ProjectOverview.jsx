@@ -34,8 +34,8 @@ const ProjectOverview = ({project , tasks , members}) => {
 
   return (
     <div className="p-6 bg-[#F9FBFD] min-h-screen w-full overflow-y-auto">
-      <h1 className="text-3xl font-bold mb-1">Project : {project.name || "NO Name"}</h1>
-      <p className="text-sm text-gray-600 mb-6">
+      <h1 className="text-3xl font-bold mb-1">Project : {project?.name || "NO Name"}</h1>
+      <p className="text-md text-gray-600 mb-6">
         {project.description || "No description available for this project."}
       </p>
 

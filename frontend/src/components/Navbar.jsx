@@ -7,12 +7,14 @@ import ProfileDrawer from './SideDrawer.jsx'
 function Navbar() {
   const { user } = useAuth();
   const [drawerOpen, setDrawerOpen] = useState(false);
-
+  const navigate = useNavigate();
   // Pick avatar based on user or fallback
   const avatarUrl = user && user.avatarIndex !== undefined
     ? avatar_links[user.avatarIndex % avatar_links.length]
     : avatar_links[0];
-
+  const handlegoBack = () => {
+    navigate('/dashboard');
+  }
   return (
     <div>
       <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#e7edf4] px-10 py-3">
@@ -29,7 +31,7 @@ function Navbar() {
               ></path>
             </svg>
           </div>
-          <h2 className="text-[#0d141c] text-lg font-bold leading-tight tracking-[-0.015em]">
+          <h2 className="text-[#0d141c] text-lg font-bold leading-tight tracking-[-0.015em]" onClick={handlegoBack}>
             HH Project Manager
           </h2>
         </div>

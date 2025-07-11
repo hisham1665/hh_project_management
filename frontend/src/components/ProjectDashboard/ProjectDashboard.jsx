@@ -1,11 +1,12 @@
 // Dashboard.jsx
-import React, { useEffect, useState } from "react";
-import ProjectOverview from "./ProjectOverview";
+import React, { use, useEffect, useState } from "react";
+import ProjectOverview from "./ProjectOverview/ProjectOverview";
 import { FaTasks, FaUsers, FaHome, FaBars, FaTimes } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-const NAVBAR_HEIGHT = 70; 
+import TaskOverviewPage from "./TaskOverview/TaskOverview";
+const NAVBAR_HEIGHT = 70;
 
 const tabVariants = {
   initial: { opacity: 0, x: 30 },
@@ -20,14 +21,29 @@ const ProjectDashboard = () => {
   const [members, setMembers] = useState([]);
   const location = useLocation();
   const { project, allProjects } = location.state || {};
+  const navigate = useNavigate();
+  if (!project) {
+    const handleBack = () => {
+      navigate("/dashboard");
+    }
+    return  <div className="text-red-500 text-center p-4">
+        Project data not found. Please go back and reselect a project.
+        <button onClick={handleBack} className="text-blue-500 hover:underline ml-2">
+          Dashboard
+        </button>
+      </div>
+  }
+
   useEffect(() => {
     const fetchTasks = async () => {
       if (project && project._id) {
         try {
           const response = await axios.get(`/api/task/project/${project._id}`);
-          const memberResponse = await axios.get(`/api/project/members/${project._id}`);
+          const memberResponse = await axios.get(
+            `/api/project/members/${project._id}`
+          );
           setMembers(memberResponse.data.members || []);
-            setTasks(response.data || []);
+          setTasks(response.data || []);
         } catch (err) {
           console.error("Failed to fetch tasks:", err);
         }
@@ -36,15 +52,16 @@ const ProjectDashboard = () => {
       }
     };
     fetchTasks();
-
   }, [location]);
 
   const renderContent = () => {
     switch (activeTab) {
       case "overview":
-        return <ProjectOverview project={project} tasks={tasks} members={members}/>;
+        return (
+          <ProjectOverview project={project} tasks={tasks} members={members} />
+        );
       case "tasks":
-        return <div className="p-6">loading...</div>;
+        return <TaskOverviewPage project={project} tasks={tasks} />;
       case "members":
         return <div className="p-6">div</div>;
       default:

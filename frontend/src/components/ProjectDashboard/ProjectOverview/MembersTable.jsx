@@ -9,6 +9,7 @@ import {
   Paper,
   Avatar,
 } from "@mui/material";
+import { Button, Stack } from "@mui/material";
 
 function MembersTable({ members }) {
   return (
