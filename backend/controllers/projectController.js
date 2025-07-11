@@ -6,24 +6,34 @@ export const createProject = async (req, res) => {
   const { name, description, userId, members } = req.body;
 
   try {
-    // Combine the creator with the members array (avoiding duplicates)
-    const allMembers = Array.from(new Set([userId, ...(members || [])]));
+    // Filter out the creator if already added in the members list
+    const filteredMembers = (members || []).filter(
+      (id) => id !== userId
+    );
 
-    // Create the project
+    // Build the members array with roles
+    const membersWithRoles = [
+      { user: userId, role: 'admin' }, // Creator
+      ...filteredMembers.map((memberId) => ({
+        user: memberId,
+        role: 'member',
+      })),
+    ];
+
     const project = await Project.create({
       name,
       description,
       createdBy: userId,
-      members: allMembers,
+      members: membersWithRoles,
     });
 
-    // Update the user's createdProjects
+    // Update the creator's profile
     await User.findByIdAndUpdate(userId, {
       $push: { createdProjects: project._id },
     });
 
     res.status(201).json({
-      message: "Project created successfully",
+      message: 'Project created successfully',
       project,
     });
   } catch (error) {
@@ -132,5 +142,25 @@ export const removeMemberFromProject = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+};
+
+
+export const getProjectMembers = async (req, res) => {
+  const { projectId } = req.params;
+
+  try {
+    const project = await Project.findById(projectId).populate("members", "name email");
+
+    if (!project) {
+      return res.status(404).json({ error: "Project not found" });
+    }
+
+    res.status(200).json({
+      members: project.members,
+    });
+  } catch (error) {
+    console.error("Error fetching project members:", error);
+    res.status(500).json({ error: "Server error" });
   }
 };

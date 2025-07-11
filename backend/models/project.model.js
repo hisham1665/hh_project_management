@@ -16,7 +16,12 @@ const projectSchema = new Schema({
   
   members: [{ 
     type: Schema.Types.ObjectId, 
-    ref: 'User' 
+    ref: 'User' ,
+    role: { 
+      type: String, 
+      enum: ['admin', 'member'], 
+      default: 'member' 
+},
 }], // <-- scalable for future
   tasks: [{ 
     type: Schema.Types.ObjectId, 

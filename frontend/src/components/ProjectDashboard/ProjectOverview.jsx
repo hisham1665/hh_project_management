@@ -18,31 +18,8 @@ import MembersTable from "./MembersTable";
 import ProgressChartSection from "./ProgressChartSection";
 
 
-const dummyMembers = [
-  {
-    name: "Sophia Clark",
-    role: "Project Manager",
-    responsibility: "Oversee project timelines and resources",
-  },
-  {
-    name: "Ethan Carter",
-    role: "Lead Developer",
-    responsibility: "Manage development team and code quality",
-  },
-];
 
-
-
-const ProjectOverview = ({project , tasks}) => {
-  const [members, setMembers] = useState(dummyMembers);
-
-  // Uncomment this and replace URL with real endpoint
-  // useEffect(() => {
-  //   axios.get('/api/members')
-  //     .then(res => setMembers(res.data))
-  //     .catch(err => console.error(err));
-  // }, []);
-
+const ProjectOverview = ({project , tasks , members}) => {
   const totalTasks = tasks.length;
   const completedTasks = tasks.filter(
     (task) => task.status === "done"
@@ -57,7 +34,7 @@ const ProjectOverview = ({project , tasks}) => {
 
   return (
     <div className="p-6 bg-[#F9FBFD] min-h-screen w-full overflow-y-auto">
-      <h1 className="text-3xl font-bold mb-1">Project : {project.name}</h1>
+      <h1 className="text-3xl font-bold mb-1">Project : {project.name || "NO Name"}</h1>
       <p className="text-sm text-gray-600 mb-6">
         {project.description || "No description available for this project."}
       </p>
@@ -114,7 +91,7 @@ const ProjectOverview = ({project , tasks}) => {
 </div>
 
       {/* Team Members */}
-     <MembersTable members={dummyMembers} />
+     <MembersTable members={members} />
      </div>
   );
 };

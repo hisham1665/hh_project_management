@@ -5,8 +5,7 @@ import { FaTasks, FaUsers, FaHome, FaBars, FaTimes } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
-import { ta } from "date-fns/locale";
-const NAVBAR_HEIGHT = 70; // Adjust this value to match your navbar's height in px
+const NAVBAR_HEIGHT = 70; 
 
 const tabVariants = {
   initial: { opacity: 0, x: 30 },
@@ -18,6 +17,7 @@ const ProjectDashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [tasks, setTasks] = useState([]);
+  const [members, setMembers] = useState([]);
   const location = useLocation();
   const { project, allProjects } = location.state || {};
   useEffect(() => {
@@ -25,6 +25,8 @@ const ProjectDashboard = () => {
       if (project && project._id) {
         try {
           const response = await axios.get(`/api/task/project/${project._id}`);
+          const memberResponse = await axios.get(`/api/project/members/${project._id}`);
+          setMembers(memberResponse.data.members || []);
             setTasks(response.data || []);
         } catch (err) {
           console.error("Failed to fetch tasks:", err);
@@ -40,7 +42,7 @@ const ProjectDashboard = () => {
   const renderContent = () => {
     switch (activeTab) {
       case "overview":
-        return <ProjectOverview project={project} tasks={tasks} />;
+        return <ProjectOverview project={project} tasks={tasks} members={members}/>;
       case "tasks":
         return <div className="p-6">loading...</div>;
       case "members":
@@ -103,7 +105,6 @@ const ProjectDashboard = () => {
           <FaBars size={22} />
         </button>
       </div>
-      {/* Only blur the dashboard area, not the navbar */}
       <div
         className={`
     absolute left-0 w-full z-30 transition-opacity duration-200
