@@ -45,7 +45,7 @@ const ProjectOverview = ({project , tasks , members}) => {
       <div className="mb-8">
   <h2 className="text-lg font-bold mb-3">Recent Activities</h2>
   <div className="space-y-2">
-    {tasks.map((task, idx) => {
+    {[...tasks].reverse().slice(0,5).map((task, idx) => {
       const priorityColor = {
         'very-high': 'bg-red-500 text-white',
         high: 'bg-orange-400 text-white',

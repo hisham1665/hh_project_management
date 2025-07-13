@@ -173,7 +173,7 @@ const TaskTable = ({ tasks, onTaskAdded }) => {
                     <Chip
                       label={task.priority?.toUpperCase() || "UNKNOWN"}
                       color={getPriorityColor(task.priority)}
-                      variant="outlined"
+                      variant="filled"
                       size="small"
                       sx={{ fontWeight: 500 }}
                     />
