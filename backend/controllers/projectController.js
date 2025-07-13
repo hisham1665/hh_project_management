@@ -43,19 +43,31 @@ export const createProject = async (req, res) => {
 
 
 // ✅ Get all projects where the user is a member
+import mongoose from "mongoose";
+
 export const getUserProjects = async (req, res) => {
   const { userId } = req.params;
 
   try {
-    const projects = await Project.find({ members: userId })
-      .populate('createdBy', 'name email')
-      .select('-tasks');
+    const objectUserId = new mongoose.Types.ObjectId(userId);
+
+    const projects = await Project.find({
+      $or: [
+        { createdBy: objectUserId },
+        { "members.user": objectUserId }
+      ]
+    })
+      .populate("createdBy", "name email")
+      .populate("members.user", "name email") // Optional: populate members
+      .select("-tasks");
 
     res.status(200).json(projects);
   } catch (error) {
+    console.error("Error fetching user projects:", error);
     res.status(500).json({ error: error.message });
   }
 };
+
 
 // ✅ Get single project by ID
 export const getProjectById = async (req, res) => {
@@ -150,7 +162,7 @@ export const getProjectMembers = async (req, res) => {
   const { projectId } = req.params;
 
   try {
-    const project = await Project.findById(projectId).populate("members", "name email");
+    const project = await Project.findById(projectId).populate("members.user", "name email");
 
     if (!project) {
       return res.status(404).json({ error: "Project not found" });

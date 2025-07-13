@@ -4,13 +4,12 @@ import User from '../models/user.model.js';
 
 // ✅ Create a new task
 export const createTask = async (req, res) => {
-  const { title, description,  priority, status , dueDate, createdBy } = req.body;
-  const { projectId } = req.params;
+  const { title, description,  priority, status , dueDate, createdBy , projectId, assignedTo } = req.body;
   try {
     const project = await Project.findById(projectId);
     if (!project) return res.status(404).json({ message: 'Project not found' });
 
-    const task = await Task.create({ title, description, project: projectId, priority , status, dueDate, createdBy });
+    const task = await Task.create({ title, description, project: projectId, priority , status, dueDate, createdBy , assignedTo});
 
     // Push task to project's task list
     project.tasks.push(task._id);

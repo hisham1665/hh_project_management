@@ -48,16 +48,16 @@ function MembersTable({ members }) {
                           fontSize: 14,
                         }}
                       >
-                        {member.name?.[0]?.toUpperCase() || "U"}
+                        {member.user.name?.[0]?.toUpperCase() || "U"}
                       </Avatar>
-                      <span>{member.name}</span>
+                      <span>{member.user.name}</span>
                     </div>
                   </TableCell>
                   <TableCell sx={{ py: 2, px: 3 }}>
                     {member.role || "No role assigned"}
                   </TableCell>
                   <TableCell sx={{ py: 2, px: 3, color: "text.secondary" }}>
-                    {member.email}
+                    {member.user.email || "No email provided"}
                   </TableCell>
                 </TableRow>
               ))}
