@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import TaskOverviewPage from "./TaskOverview/TaskOverview";
+import MembersOverview from "./MemberOverview/MembersOverview";
 const NAVBAR_HEIGHT = 70;
 
 const tabVariants = {
@@ -80,7 +81,7 @@ const ProjectDashboard = () => {
           />
         );
       case "members":
-        return <div className="p-6">div</div>;
+        return <MembersOverview members={members} />;
       default:
         return null;
     }
