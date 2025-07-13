@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import ProjectList from "../components/ProjectCard";
 export default function Dashboard() {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -66,36 +67,7 @@ export default function Dashboard() {
           <div className="p-4 text-gray-500">No projects found.</div>
         )}
 
-        <div className="space-y-6 cursor-pointer">
-          {[...projects].reverse().map((proj, i) => (
-            <motion.div
-              key={proj._id || i}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
-            >
-              <Box className="bg-white rounded-xl p-6 shadow border border-gray-200"  onClick={() =>
-                  navigate(`project/${proj._id}`, { state: { project: proj, allProjects: projects } })
-                }> 
-                <Typography variant="h6" className="!text-blue-800 !font-bold">
-                  {proj.name}
-                </Typography>
-                <Typography variant="body2" className="text-gray-700 mt-1">
-                  {proj.description}
-                </Typography>
-                <div className="flex items-center mt-4">
-                  <Avatar sx={{ width: 32, height: 32, fontSize: 14 }} className="!bg-blue-200 !text-blue-800">
-                    {proj.createdBy?.name?.charAt(0)?.toUpperCase() || "U"}
-                  </Avatar>
-                  <Typography variant="body2" className="ml-2 text-gray-600 pl-2">
-                    Created by: {proj.createdBy?.name || "Unknown"}
-                  </Typography>
-                </div>
-              </Box>
-              {i < projects.length - 1 && <Divider className="!my-6" />}
-            </motion.div>
-          ))}
-        </div>
+        <ProjectList projects={projects} />
       </div>
 
       {/* 🧩 Modal here */}

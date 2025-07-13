@@ -147,7 +147,7 @@ const TaskTable = ({ tasks, onTaskAdded }) => {
           </TableHead>
           <TableBody>
             {filteredTasks.length > 0 ? (
-              filteredTasks.map((task, idx) => (
+              [...filteredTasks].reverse().map((task, idx) => (
                 <TableRow key={idx} hover>
                   {/* Task Name */}
                   <TableCell
