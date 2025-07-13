@@ -66,8 +66,8 @@ export default function Dashboard() {
           <div className="p-4 text-gray-500">No projects found.</div>
         )}
 
-        <div className="space-y-6">
-          {projects.map((proj, i) => (
+        <div className="space-y-6 cursor-pointer">
+          {[...projects].reverse().map((proj, i) => (
             <motion.div
               key={proj._id || i}
               initial={{ opacity: 0, y: 20 }}

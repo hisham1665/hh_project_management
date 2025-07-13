@@ -164,3 +164,31 @@ export const getProjectMembers = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
+
+// Create Task and add to Project
+export const addTaskToProject = async (req, res) => {
+  try {
+    const {  title, description, priority, status, dueDate, createdBy } = req.body;
+    const { projectId } = req.params;
+    // 1. Create the task
+    const newTask = await Task.create({
+      title,
+      description,
+      project: projectId,
+      priority,
+      status,
+      dueDate,
+      createdBy
+    });
+
+    // 2. Add the task's ObjectId to the project's tasks array
+    await Project.findByIdAndUpdate(projectId, {
+      $push: { tasks: newTask._id }
+    });
+
+    res.status(201).json(newTask);
+  } catch (error) {
+    console.error("Add Task Error:", error);
+    res.status(500).json({ error: error.message });
+  }
+};

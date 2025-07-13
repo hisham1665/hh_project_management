@@ -20,6 +20,7 @@ import {
 import { useAuth } from "../../../context/AuthContext";
 import { Add } from "@mui/icons-material";
 import AddTask from "./AddTask";
+import { useLocation } from "react-router-dom";
 
 // Format date to DD-MM-YYYY
 const formatDate = (dateStr) => {
@@ -46,14 +47,22 @@ const getPriorityColor = (priority) => {
   }
 };
 
-const TaskTable = ({ tasks }) => {
-    const {user } = useAuth();
+const TaskTable = ({ tasks, onTaskAdded }) => {
+  const { user } = useAuth();
+  const location = useLocation();
+  console.log("Tasks in TaskTable:", tasks);
+  // Get projectId from location.state if available, fallback to first task
+  const projectId =
+    location.state?.project?._id ||
+    tasks[0]?.project ||
+    "no-task";
+
   const [statusFilter, setStatusFilter] = useState("All");
   const [priorityFilter, setPriorityFilter] = useState("");
   const [assignedToMe, setAssignedToMe] = useState(false);
 
   const currentUser = user;
-
+  console.log("Current User:", currentUser);
   // Apply filters
   const filteredTasks = tasks.filter((task) => {
     if (statusFilter === "In Progress" && task.status !== "in-progress") return false;
@@ -62,7 +71,7 @@ const TaskTable = ({ tasks }) => {
 
     if (priorityFilter && task.priority !== priorityFilter) return false;
 
-    if (assignedToMe && task.assigneedTo !== currentUser.id) return false;
+    if (assignedToMe && task.assignedTo?._id !== currentUser.id) return false;
 
     return true;
   });
@@ -120,7 +129,8 @@ const TaskTable = ({ tasks }) => {
         </div>
         <div>
 
-        <AddTask />
+        {/* Pass correct projectId and onTaskAdded to AddTask */}
+        <AddTask projectId={projectId} onTaskAdded={onTaskAdded} />
         </div>
       </div>
          
@@ -179,7 +189,7 @@ const TaskTable = ({ tasks }) => {
                       px: 2,
                     }}
                   >
-                    {task.assigneedTo || "Unassigned"}
+                    {task.assignedTo ? task.assignedTo.name : "Unassigned"}
                   </TableCell>
 
                   {/* Formatted Due Date */}

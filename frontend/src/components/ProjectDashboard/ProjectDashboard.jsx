@@ -22,17 +22,23 @@ const ProjectDashboard = () => {
   const location = useLocation();
   const { project, allProjects } = location.state || {};
   const navigate = useNavigate();
+
   if (!project) {
     const handleBack = () => {
       navigate("/dashboard");
-    }
-    return  <div className="text-red-500 text-center p-4">
+    };
+    return (
+      <div className="text-red-500 text-center p-4">
         Project data not found. Please go back and reselect a project.
         <button onClick={handleBack} className="text-blue-500 hover:underline ml-2">
           Dashboard
         </button>
       </div>
+    );
   }
+
+  // Add a local refresh trigger for tasks
+  const [refreshTasks, setRefreshTasks] = useState(false);
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -52,7 +58,12 @@ const ProjectDashboard = () => {
       }
     };
     fetchTasks();
-  }, [location]);
+  }, [location, refreshTasks, project._id]);
+
+  // Handler to trigger task refresh after add
+  const handleTaskAdded = () => {
+    setRefreshTasks((prev) => !prev);
+  };
 
   const renderContent = () => {
     switch (activeTab) {
@@ -61,7 +72,13 @@ const ProjectDashboard = () => {
           <ProjectOverview project={project} tasks={tasks} members={members} />
         );
       case "tasks":
-        return <TaskOverviewPage project={project} tasks={tasks} />;
+        return (
+          <TaskOverviewPage
+            project={project}
+            tasks={tasks}
+            onTaskAdded={handleTaskAdded}
+          />
+        );
       case "members":
         return <div className="p-6">div</div>;
       default:

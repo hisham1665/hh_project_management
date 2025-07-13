@@ -4,8 +4,8 @@ import User from '../models/user.model.js';
 
 // ✅ Create a new task
 export const createTask = async (req, res) => {
-  const { title, description, projectId, priority, status , dueDate, createdBy } = req.body;
-
+  const { title, description,  priority, status , dueDate, createdBy } = req.body;
+  const { projectId } = req.params;
   try {
     const project = await Project.findById(projectId);
     if (!project) return res.status(404).json({ message: 'Project not found' });
@@ -94,3 +94,51 @@ export const deleteTask = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+// Create Task and add to Project
+export const addTaskToProject = async (req, res) => {
+  const { projectId } = req.params;
+  const tasks = req.body;
+
+  if (!Array.isArray(tasks) || tasks.length === 0) {
+    return res.status(400).json({ error: "No tasks provided." });
+  }
+
+  try {
+    const createdTasks = [];
+
+    for (const task of tasks) {
+      // Validate required fields
+      if (!task.title || !task.createdBy) {
+        continue; // skip invalid task
+      }
+
+      const newTask = await Task.create({
+        title: task.title,
+        description: task.description || "",
+        priority: task.priority || "low",
+        status: task.status || "todo",
+        dueDate: task.dueDate,
+        createdBy: task.createdBy,
+        assignedTo: task.assignedTo || null,
+        project: projectId,
+      });
+
+      // Push the task ID to the project's tasks array
+      await Project.findByIdAndUpdate(projectId, {
+        $push: { tasks: newTask._id },
+      });
+
+      createdTasks.push(newTask);
+    }
+
+    res.status(201).json({
+      message: `${createdTasks.length} task(s) created successfully.`,
+      tasks: createdTasks,
+    });
+  } catch (error) {
+    console.error("Error creating tasks:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+

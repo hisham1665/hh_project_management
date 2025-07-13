@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   TextField,
   MenuItem,
@@ -10,11 +10,17 @@ import {
 import { AddCircle, Delete } from "@mui/icons-material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import Autocomplete from "@mui/material/Autocomplete";
+import axios from "axios";
+import { useAuth } from "../../context/AuthContext";
 
 const priorities = ["low", "medium", "high", "very-high"];
 const statuses = ["todo", "in-progress", "done", "dropped"];
 
 export default function TaskEntry({ tasks, onChange }) {
+  const [userOptions, setUserOptions] = useState([]);
+  const [loadingUser, setLoadingUser] = useState(false);
+  const {user} = useAuth();
   const handleTaskChange = (index, field, value) => {
     const updated = [...tasks];
     updated[index][field] = value;
@@ -31,6 +37,7 @@ export default function TaskEntry({ tasks, onChange }) {
         status: "todo",
         dueDate: new Date(),
         createdBy: "",
+        assignedTo: user.id || null,
       },
     ]);
   };
@@ -38,6 +45,19 @@ export default function TaskEntry({ tasks, onChange }) {
   const removeTask = (index) => {
     const updated = tasks.filter((_, i) => i !== index);
     onChange(updated);
+  };
+
+  const handleUserSearch = async (query) => {
+    if (!query) return;
+    setLoadingUser(true);
+    try {
+      const res = await axios.get(`/api/user/search?q=${query}`);
+      setUserOptions(res.data || []);
+    } catch (err) {
+      setUserOptions([]);
+    } finally {
+      setLoadingUser(false);
+    }
   };
 
   return (
@@ -116,6 +136,27 @@ export default function TaskEntry({ tasks, onChange }) {
                   ))}
                 </TextField>
               </Stack>
+              {/* Assignee field with suggestions */}
+              <Autocomplete
+                fullWidth
+                options={userOptions}
+                loading={loadingUser}
+                getOptionLabel={(option) => option.name || ""}
+                value={task.assignedTo || null}
+                onChange={(_, newValue) =>
+                  handleTaskChange(index, "assignedTo", newValue)
+                }
+                onInputChange={(_, value, reason) => {
+                  if (reason === "input") handleUserSearch(value);
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Assign to User"
+                    variant="outlined"
+                  />
+                )}
+              />
               <Box display="flex" justifyContent="end">
                 <IconButton onClick={() => removeTask(index)} color="error">
                   <Delete />
@@ -128,7 +169,7 @@ export default function TaskEntry({ tasks, onChange }) {
 
       <Box display="flex" justifyContent="end" mt={3}>
         <IconButton onClick={addTask} color="primary">
-          <AddCircle fontSize="large" />
+         <span className="font-bold text-xl mr-3">Add Task</span> <AddCircle fontSize="large" /> 
         </IconButton>
       </Box>
     </LocalizationProvider>
