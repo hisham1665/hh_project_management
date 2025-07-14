@@ -87,7 +87,7 @@ export const getProjectById = async (req, res) => {
   }
 };
 
-// ✅ Add a member to the project
+
 export const addMemberToProject = async (req, res) => {
   const { projectId } = req.params;
   const { memberId } = req.body;
@@ -96,16 +96,25 @@ export const addMemberToProject = async (req, res) => {
     const project = await Project.findById(projectId);
     if (!project) return res.status(404).json({ message: 'Project not found' });
 
-    // Check if already a member
-    if (project.members.includes(memberId)) {
+    // Check if member already exists (by user ID inside member object)
+    const alreadyMember = project.members.some(
+      (m) => m.user.toString() === memberId
+    );
+    if (alreadyMember) {
       return res.status(400).json({ message: 'User already a member' });
     }
 
-    project.members.push(memberId);
+    // Add new member with default role
+    project.members.push({
+      user: memberId,
+      role: "member",
+    });
+
     await project.save();
 
-    res.status(200).json({ message: 'Member added', project });
+    res.status(200).json({ message: 'Member added successfully', project });
   } catch (error) {
+    console.error("Add member error:", error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -136,9 +145,9 @@ export const removeMemberFromProject = async (req, res) => {
       return res.status(403).json({ message: "Cannot remove the project creator" });
     }
 
-    // Check if member exists in the project
+    // Find the index of the member object whose 'user' field matches memberId
     const memberIndex = project.members.findIndex(
-      (id) => id.toString() === memberId
+      (member) => member.user.toString() === memberId
     );
     if (memberIndex === -1) {
       return res.status(404).json({ message: 'Member not found in project' });
@@ -162,7 +171,7 @@ export const getProjectMembers = async (req, res) => {
   const { projectId } = req.params;
 
   try {
-    const project = await Project.findById(projectId).populate("members.user", "name email");
+    const project = await Project.findById(projectId).populate("members.user", "name email avatarIndex");
 
     if (!project) {
       return res.status(404).json({ error: "Project not found" });

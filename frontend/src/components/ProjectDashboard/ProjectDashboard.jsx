@@ -70,7 +70,7 @@ const ProjectDashboard = () => {
     switch (activeTab) {
       case "overview":
         return (
-          <ProjectOverview project={project} tasks={tasks} members={members} />
+          <ProjectOverview project={project} tasks={tasks} members={members}  />
         );
       case "tasks":
         return (
@@ -81,7 +81,7 @@ const ProjectDashboard = () => {
           />
         );
       case "members":
-        return <MembersOverview members={members} />;
+        return <MembersOverview project={project} members={members} onMembersEdited={handleTaskAdded}/>;
       default:
         return null;
     }

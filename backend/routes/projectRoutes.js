@@ -8,7 +8,7 @@ Projectrouter.get("/userProject/:userId", getUserProjects);
 Projectrouter.get("/:projectId", getProjectById);
 Projectrouter.post("/addMember/:projectId", addMemberToProject);
 Projectrouter.delete("/deleteProject/:projectId", deleteProject);
-Projectrouter.post("/:projectId/removeMember", removeMemberFromProject);
+Projectrouter.post("/remove-member/:projectId", removeMemberFromProject);
 Projectrouter.get("/members/:projectId", getProjectMembers);
 
 
