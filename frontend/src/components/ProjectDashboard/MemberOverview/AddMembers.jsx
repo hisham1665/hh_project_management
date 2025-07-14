@@ -66,7 +66,6 @@ function AddMembers({ project, onMembersEdited }) {
       <Button onClick={handleOpen} variant="contained">
         Add Members
       </Button>
-
       <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth   >
         <DialogTitle>Search & Add Member</DialogTitle>
         <Typography variant='subtitle2' color='textSecondary' sx={{ padding: '0 16px' }}> 
