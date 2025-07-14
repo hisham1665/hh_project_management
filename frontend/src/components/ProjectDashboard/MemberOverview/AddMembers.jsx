@@ -11,6 +11,7 @@ import {
   ListItemText,
   CircularProgress,
   Typography,
+  Alert,
 } from '@mui/material';
 import axios from 'axios';
 
@@ -37,7 +38,6 @@ function AddMembers({ project, onMembersEdited }) {
     setLoading(true);
     try {
         const res = await axios.get(`/api/user/search?q=${query}`);
-        console.log(res.data)
       setUsers(res.data || []);
     } catch (err) {
       console.error('Search failed:', err);
@@ -52,9 +52,11 @@ function AddMembers({ project, onMembersEdited }) {
       await axios.post(`/api/project/addMember/${project._id}`, {
         memberId: selectedUser._id,
       });
+      <Alert severity="success">Member added successfully!</Alert>;
       onMembersEdited?.(); // refresh parent
       handleClose();
     } catch (err) {
+        <Alert severity="error">Failed to add member: {err.response?.data?.message || err.message}</Alert>;
       console.error('Add member failed:', err);
     }
   };
@@ -65,7 +67,7 @@ function AddMembers({ project, onMembersEdited }) {
         Add Members
       </Button>
 
-      <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth  >
+      <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth   >
         <DialogTitle>Search & Add Member</DialogTitle>
         <Typography variant='subtitle2' color='textSecondary' sx={{ padding: '0 16px' }}> 
             search by name or email and hit enter to search
