@@ -50,7 +50,6 @@ const getPriorityColor = (priority) => {
 const TaskTable = ({ tasks, onTaskAdded }) => {
   const { user } = useAuth();
   const location = useLocation();
-  console.log("Tasks in TaskTable:", tasks);
   // Get projectId from location.state if available, fallback to first task
   const projectId =
     location.state?.project?._id ||
@@ -62,7 +61,6 @@ const TaskTable = ({ tasks, onTaskAdded }) => {
   const [assignedToMe, setAssignedToMe] = useState(false);
 
   const currentUser = user;
-  console.log("Current User:", currentUser);
   // Apply filters
   const filteredTasks = tasks.filter((task) => {
     if (statusFilter === "In Progress" && task.status !== "in-progress") return false;

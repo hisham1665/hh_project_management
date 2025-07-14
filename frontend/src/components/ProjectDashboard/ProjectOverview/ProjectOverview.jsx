@@ -96,6 +96,7 @@ const ProjectOverview = ({ project, tasks, members }) => {
       </div>
 
       {/* Team Members */}
+      <h2 className="text-lg font-bold mb-3">Project Members</h2>
       <MembersTable members={members} />
     </div>
   );
