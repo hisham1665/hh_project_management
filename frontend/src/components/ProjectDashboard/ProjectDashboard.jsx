@@ -1,7 +1,7 @@
 // Dashboard.jsx
 import React, { use, useEffect, useState } from "react";
 import ProjectOverview from "./ProjectOverview/ProjectOverview";
-import { FaTasks, FaUsers, FaHome, FaBars, FaTimes } from "react-icons/fa";
+import { FaTasks, FaUsers, FaHome, FaBars, FaTimes, FaRocketchat } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -82,8 +82,10 @@ const ProjectDashboard = () => {
         );
       case "members":
         return <MembersOverview project={project} members={members} onMembersEdited={handleTaskAdded}/>;
-      default:
-        return null;
+        case "messages":
+        return <div>Messages content goes here</div>;
+        default:
+          return null;
     }
   };
 
@@ -128,6 +130,18 @@ const ProjectDashboard = () => {
           onClick={() => setActiveTab("members")}
         >
           <FaUsers /> Members
+        </button>
+        <button
+          className={`flex items-center gap-3 px-3 py-2 rounded-md text-left transition-colors ${
+            activeTab === "messages"
+              ? "bg-blue-100 text-blue-600"
+              : "text-gray-700 hover:bg-gray-100"
+          }`}
+          onClick={() => {
+            setActiveTab("messages");
+          }}
+        >
+          <FaRocketchat/> Messages
         </button>
       </aside>
 
@@ -210,6 +224,19 @@ const ProjectDashboard = () => {
           }}
         >
           <FaUsers /> Members
+        </button>
+        <button
+          className={`flex items-center gap-3 px-3 py-2 rounded-md text-left transition-colors ${
+            activeTab === "messages"
+              ? "bg-blue-100 text-blue-600"
+              : "text-gray-700 hover:bg-gray-100"
+          }`}
+          onClick={() => {
+            setActiveTab("messages");
+            setSidebarOpen(false);
+          }}
+        >
+          <FaRocketchat/> Messages
         </button>
       </aside>
 
