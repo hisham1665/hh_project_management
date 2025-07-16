@@ -9,6 +9,8 @@ import NotFound from "./pages/NotFound";
 import MainLayout from "./components/MainLayout";
 
 import ProjectDashboard from "./components/ProjectDashboard/ProjectDashboard";
+import TaskPage from "./components/ProjectDashboard/TaskDashboard/TaskPage";
+
 function App() {
 
   return (
@@ -20,6 +22,7 @@ function App() {
         <Route path="/dashboard" element={<AccessRoute requireAuth={true} redirectTo="/404" ><MainLayout /></AccessRoute>} >
           <Route index element={<Dashboard />} />
           <Route path="project/:id" element={<ProjectDashboard/>} />
+          <Route path="project/:id/task/:id" element={<TaskPage/>} />
         </Route> 
         <Route path="*" element={<NotFound/>} />
       </Routes>

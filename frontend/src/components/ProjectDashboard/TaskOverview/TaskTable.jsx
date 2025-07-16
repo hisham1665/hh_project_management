@@ -19,10 +19,9 @@ import {
   Box,
 } from "@mui/material";
 import { useAuth } from "../../../context/AuthContext";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import AddTask from "./AddTask";
 
-// Helpers
 const formatDate = (dateStr) => {
   const d = new Date(dateStr);
   return d.toLocaleDateString("en-GB");
@@ -42,7 +41,7 @@ const TaskTable = ({ tasks, onTaskAdded }) => {
   const { user } = useAuth();
   const location = useLocation();
   const projectId = location.state?.project?._id || tasks[0]?.project || "no-task";
-
+  const navigate = useNavigate();
   const [statusFilter, setStatusFilter] = useState("All");
   const [priorityFilter, setPriorityFilter] = useState("");
   const [assignedToMe, setAssignedToMe] = useState(false);
@@ -58,12 +57,10 @@ const TaskTable = ({ tasks, onTaskAdded }) => {
 
   return (
     <div className="w-full">
-      {/* Filter Controls */}
       <Box
         className="flex flex-col lg:flex-row justify-between gap-4 mb-6"
       >
         <div className="flex flex-col sm:flex-row flex-wrap gap-4 items-start sm:items-center">
-          {/* Status Filters */}
           <Stack direction="row" spacing={1} className="flex-wrap">
             {["All", "In Progress", "Completed", "Not Completed"].map((label) => (
               <Button
@@ -83,8 +80,6 @@ const TaskTable = ({ tasks, onTaskAdded }) => {
               </Button>
             ))}
           </Stack>
-
-          {/* Priority Dropdown */}
           <FormControl size="small" className="min-w-[150px]">
             <InputLabel>Priority</InputLabel>
             <Select
@@ -100,7 +95,6 @@ const TaskTable = ({ tasks, onTaskAdded }) => {
             </Select>
           </FormControl>
 
-          {/* Assigned To Me */}
           <Stack direction="row" spacing={1} alignItems="center">
             <Switch
               checked={assignedToMe}
@@ -110,7 +104,6 @@ const TaskTable = ({ tasks, onTaskAdded }) => {
           </Stack>
         </div>
 
-        {/* Add Task Button */}
         <div className="flex justify-end">
           <AddTask projectId={projectId} onTaskAdded={onTaskAdded} />
         </div>
@@ -121,7 +114,7 @@ const TaskTable = ({ tasks, onTaskAdded }) => {
         component={Paper}
         sx={{
           borderRadius: 2,
-          overflowX: "auto", // Ensures responsiveness
+          overflowX: "auto", 
         }}
       >
         <Table size="small">
@@ -136,7 +129,7 @@ const TaskTable = ({ tasks, onTaskAdded }) => {
           <TableBody>
             {filteredTasks.length > 0 ? (
               [...filteredTasks].reverse().map((task, idx) => (
-                <TableRow key={idx} hover>
+                <TableRow key={idx} hover onClick={() => { navigate(`task/${task._id}`, { state: { task, projectId } }) }}>
                   <TableCell
                     sx={{
                       backgroundColor: getTaskBgColor(task.status),
