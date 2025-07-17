@@ -18,7 +18,6 @@ const InfoRow = ({ icon, label, value }) => (
 );
 
 const TaskDetailsCard = ({
-  project = "Project Alpha",
   priority = "High",
   assigneed = { name: "John Doe" , email: "sample@gmail.com"},
   dueDate = "July 15, 2024",
@@ -40,7 +39,7 @@ const TaskDetailsCard = ({
     <InfoRow
       icon={<CalendarMonthOutlinedIcon className="text-gray-400" fontSize="large" />}
       label="Due Date"
-      value={dueDate}
+      value={dueDate || "No due date set"}
     />
   </div>
 );

@@ -3,6 +3,7 @@ import React from "react";
 import { useLocation } from "react-router-dom";
 import Comments from "./Comments";
 import TaskDetailsCard from "./Details";
+import Actions from "./Actions";
 const getPriorityColor = (priority) => {
   switch (priority?.toLowerCase()) {
     case "very-high":
@@ -50,7 +51,8 @@ function TaskPage() {
 
   {/* Right section: Sidebar with details */}
   <Container maxWidth="lg" className="w-full lg:w-1/3 justify-items-end">
-    <TaskDetailsCard project={task.project} assigneed={task.assignedTo} priority={task.priority} dueDate={task.dueDate}/>
+    <TaskDetailsCard  assigneed={task.assignedTo} priority={task.priority} dueDate={task.dueDate}/>
+    <Actions task={task} />
   </Container>
 </div>
 
