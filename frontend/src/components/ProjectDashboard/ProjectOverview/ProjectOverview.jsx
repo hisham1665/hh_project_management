@@ -24,6 +24,29 @@ const ProjectOverview = ({ project, tasks, members }) => {
     (task) => new Date(task.deadline) > new Date()
   ).length;
   const progress = Math.round((completedTasks / totalTasks) * 100);
+
+  // Prepare task history data for chart
+  // Example: [{ date: "Jul 10", assigned: 2, done: 1 }, ...]
+  const taskHistoryData = React.useMemo(() => {
+    // Group tasks by date (e.g., deadline or createdAt)
+    const historyMap = {};
+    tasks.forEach((task) => {
+      const dateKey = new Date(task.createdAt || task.deadline).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      });
+      if (!historyMap[dateKey]) {
+        historyMap[dateKey] = { date: dateKey, assigned: 0, done: 0 };
+      }
+      historyMap[dateKey].assigned += 1;
+      if (task.status === "done") historyMap[dateKey].done += 1;
+    });
+    // Sort by date
+    return Object.values(historyMap).sort((a, b) =>
+      new Date(a.date) - new Date(b.date)
+    );
+  }, [tasks]);
+
   const recentActivities = tasks
     .filter((task) => task.assignedToMe)
     .slice(0, 5);
@@ -42,6 +65,7 @@ const ProjectOverview = ({ project, tasks, members }) => {
         progress={progress}
         totalTasks={totalTasks}
         completedTasks={completedTasks}
+        taskHistoryData={taskHistoryData}
       />
       {/* Recent Activities */}
       <div className="mb-8">

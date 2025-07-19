@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import {
   CircularProgress,
   Box,
@@ -12,15 +12,7 @@ import {
 import { LineChart } from "@mui/x-charts/LineChart";
 import { motion } from "framer-motion";
 
-const taskHistory = [
-  { date: "Jul 10", done: 1, assigned: 2 },
-  { date: "Jul 11", done: 1, assigned: 3 },
-  { date: "Jul 12", done: 2, assigned: 4 },
-  { date: "Jul 13", done: 2, assigned: 5 },
-  { date: "Jul 14", done: 3, assigned: 6 },
-];
-
-function ProgressChartSection({ progress, totalTasks, completedTasks }) {
+function ProgressChartSection({ progress, totalTasks, completedTasks, taskHistoryData }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -31,6 +23,17 @@ function ProgressChartSection({ progress, totalTasks, completedTasks }) {
   const chartHeight = isMobile ? 180 : 300;
   const statFont = isMobile ? 16 : 22;
   const statLabelFont = isMobile ? 12 : 16;
+
+  // Prepare chart data from props (taskHistoryData)
+  const chartData = useMemo(() => {
+    // Fallback to empty array if not provided
+    const history = Array.isArray(taskHistoryData) ? taskHistoryData : [];
+    return {
+      assigned: history.map((t) => t.assigned),
+      done: history.map((t) => t.done),
+      dates: history.map((t) => t.date),
+    };
+  }, [taskHistoryData]);
 
   return (
     <Grid
@@ -201,18 +204,18 @@ function ProgressChartSection({ progress, totalTasks, completedTasks }) {
               height={chartHeight}
               series={[
                 {
-                  data: taskHistory.map((t) => t.assigned),
+                  data: chartData.assigned,
                   label: "Assigned Tasks",
                   color: "#2563eb",
                 },
                 {
-                  data: taskHistory.map((t) => t.done),
+                  data: chartData.done,
                   label: "Completed Tasks",
                   color: "#16a34a",
                 },
               ]}
               xAxis={[
-                { scaleType: "point", data: taskHistory.map((t) => t.date) },
+                { scaleType: "point", data: chartData.dates },
               ]}
               sx={{ mt: 2 }}
             />
