@@ -37,7 +37,7 @@ const getPriorityColor = (priority) => {
   }
 };
 
-const TaskTable = ({ tasks, onTaskAdded }) => {
+const TaskTable = ({ tasks, onTaskAdded, members }) => {
   const { user } = useAuth();
   const location = useLocation();
   const projectId = location.state?.project?._id || tasks[0]?.project || "no-task";
@@ -129,7 +129,7 @@ const TaskTable = ({ tasks, onTaskAdded }) => {
           <TableBody>
             {filteredTasks.length > 0 ? (
               [...filteredTasks].reverse().map((task, idx) => (
-                <TableRow key={idx} hover onClick={() => { navigate(`task/${task._id}`, { state: { task, projectId } }) }}>
+                <TableRow key={idx} hover onClick={() => { navigate(`task/${task._id}`, { state: { task, projectId,members } }) }}>
                   <TableCell
                     sx={{
                       backgroundColor: getTaskBgColor(task.status),

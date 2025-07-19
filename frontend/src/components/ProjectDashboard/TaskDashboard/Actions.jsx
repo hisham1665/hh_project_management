@@ -1,68 +1,172 @@
-import React, { useState } from "react";
-import { Modal, Box, TextField, Button as MuiButton } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import {
+  Modal,
+  Box,
+  TextField,
+  Button as MuiButton,
+  MenuItem,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+} from "@mui/material";
+import axios from "axios";
+import { useAuth } from "../../../context/AuthContext";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { useNavigate } from "react-router-dom";
 
-// Dummy API functions (replace with your real API calls)
-const markAsCompleteAPI = async (taskId) => {
-  alert(`API: Marked task ${taskId} as complete`);
-};
-const deleteTaskAPI = async (taskId) => {
-  alert(`API: Deleted task ${taskId}`);
-};
-const updateTaskAPI = async (taskId, data) => {
-  alert(`API: Updated task ${taskId} with title "${data.title}"`);
-};
-
-const EditTaskModal = ({ open, onClose, task, onSave }) => {
+const EditTaskModal = ({ open, onClose, task, members, onSave }) => {
   const [title, setTitle] = useState(task.title || "");
   const [description, setDescription] = useState(task.description || "");
+  const [status, setStatus] = useState(task.status || "todo");
+  const [dueDate, setDueDate] = useState(task.dueDate || "");
+  const [priority, setPriority] = useState(task.priority || "low");
+  const statusOptions = ["todo", "in-progress", "done", "dropped"];
+  const priorityOptions = ["low", "medium", "high", "very-high"];
 
   const handleSave = () => {
-    onSave({ title, description });
+    onSave({
+      title,
+      description,
+      status,
+      dueDate,
+      priority,
+    });
     onClose();
   };
 
   return (
     <Modal open={open} onClose={onClose}>
-      <Box className="bg-white rounded-xl p-6 w-full max-w-md mx-auto mt-32 outline-none">
-        <h2 className="text-xl font-bold mb-4">Edit Task</h2>
-        <TextField
-          label="Title"
-          fullWidth
-          value={title}
-          onChange={e => setTitle(e.target.value)}
-          className="mb-4"
-        />
-        <TextField
-          label="Description"
-          fullWidth
-          multiline
-          minRows={3}
-          value={description}
-          onChange={e => setDescription(e.target.value)}
-          className="mb-4"
-        />
-        <div className="flex justify-end gap-2 mt-4">
-          <MuiButton onClick={onClose} variant="outlined">Cancel</MuiButton>
-          <MuiButton onClick={handleSave} variant="contained">Save</MuiButton>
-        </div>
-      </Box>
+      <LocalizationProvider dateAdapter={AdapterDateFns}>
+        <Box
+          className="bg-white rounded-xl w-full max-w-md mx-auto outline-none"
+          sx={{
+            p: { xs: 2, sm: 4 },
+            boxShadow: 3,
+            position: "absolute",
+            top: { xs: "10%", sm: "15%" }, // Move modal up
+            left: "50%",
+            transform: "translate(-50%, 0)",
+            maxHeight: { xs: "80vh", sm: "85vh" },
+            overflowY: "auto",
+          }}
+        >
+          <h2 className="text-xl font-bold mb-4">Edit Task</h2>
+          <TextField
+            label="Title"
+            fullWidth
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            sx={{ mb: { xs: 2, sm: 3 } }}
+          />
+          <TextField
+            label="Description"
+            fullWidth
+            multiline
+            minRows={3}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            sx={{ mb: { xs: 2, sm: 3 } }}
+          />
+          <TextField
+            label="Status"
+            fullWidth
+            select
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+            sx={{ mb: { xs: 2, sm: 3 } }}
+          >
+            {statusOptions.map((option) => (
+              <MenuItem key={option} value={option}>
+                {option}
+              </MenuItem>
+            ))}
+          </TextField>
+          <DatePicker
+            label="Due Date"
+            value={dueDate ? new Date(dueDate) : null}
+            onChange={(newValue) => setDueDate(newValue)}
+            slotProps={{ textField: { fullWidth: true, sx: { mb: { xs: 2, sm: 3 } } } }}
+            renderInput={(params) => (
+              <TextField {...params} />
+            )}
+          />
+          <TextField
+            label="Priority"
+            fullWidth
+            select
+            value={priority}
+            onChange={(e) => setPriority(e.target.value)}
+            sx={{ mb: { xs: 2, sm: 3 } }}
+          >
+            {priorityOptions.map((option) => (
+              <MenuItem key={option} value={option}>
+                {option}
+              </MenuItem>
+            ))}
+          </TextField>
+          <div className="flex justify-end gap-2 mt-4">
+            <MuiButton onClick={onClose} variant="outlined">
+              Cancel
+            </MuiButton>
+            <MuiButton onClick={handleSave} variant="contained">
+              Save
+            </MuiButton>
+          </div>
+        </Box>
+      </LocalizationProvider>
     </Modal>
   );
 };
 
-const Actions = ({ task }) => {
+const Actions = ({ task, members, onTaskUpdated }) => {
   const [editOpen, setEditOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
+  // Mark as complete
   const handleMarkComplete = async () => {
-    await markAsCompleteAPI(task._id);
+    try {
+      await axios.put(`/api/task/update-task/${task._id}`, { status: "done" });
+      if (onTaskUpdated) onTaskUpdated();
+    } catch (err) {
+      // handle error
+    }
   };
 
+  // Delete task with confirmation
   const handleDelete = async () => {
-    await deleteTaskAPI(task._id);
+    setConfirmOpen(true);
   };
 
+  const handleConfirmDelete = async () => {
+    try {
+      await axios.delete(`/api/task/delete-task/${task._id}`);
+      setConfirmOpen(false);
+      if (onTaskUpdated) onTaskUpdated();
+      navigate(-1);
+    } catch (err) {
+      setConfirmOpen(false);
+      // handle error
+    }
+  };
+
+  // Edit task
   const handleEditSave = async (data) => {
-    await updateTaskAPI(task._id, data);
+    try {
+      await axios.put(`/api/task/update-task/${task._id}`, {
+        title: data.title,
+        description: data.description,
+        status: data.status,
+        dueDate: data.dueDate,
+        priority: data.priority,
+      });
+      if (onTaskUpdated) onTaskUpdated();
+    } catch (err) {
+      // handle error
+    }
   };
 
   return (
@@ -90,8 +194,23 @@ const Actions = ({ task }) => {
         open={editOpen}
         onClose={() => setEditOpen(false)}
         task={task}
+        members={members}
         onSave={handleEditSave}
       />
+      <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)}>
+        <DialogTitle>Confirm Delete</DialogTitle>
+        <DialogContent>
+          Are you sure you want to delete this task? This action cannot be undone.
+        </DialogContent>
+        <DialogActions>
+          <MuiButton onClick={() => setConfirmOpen(false)} variant="outlined">
+            Cancel
+          </MuiButton>
+          <MuiButton onClick={handleConfirmDelete} color="error" variant="contained">
+            Delete
+          </MuiButton>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

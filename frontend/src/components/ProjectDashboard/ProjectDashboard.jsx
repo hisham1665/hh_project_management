@@ -78,6 +78,7 @@ const ProjectDashboard = () => {
             project={project}
             tasks={tasks}
             onTaskAdded={handleTaskAdded}
+            members={members}
           />
         );
       case "members":
