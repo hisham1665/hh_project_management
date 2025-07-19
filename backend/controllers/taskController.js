@@ -141,3 +141,45 @@ export const addTaskToProject = async (req, res) => {
   }
 };
 
+// ✅ Get comments for a task
+export const getTaskComments = async (req, res) => {
+  const { taskId } = req.params;
+  try {
+    const task = await Task.findById(taskId).populate("comments.user", "name avatarIndex");
+    if (!task) return res.status(404).json({ message: "Task not found" });
+    res.status(200).json({ comments: task.comments });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// ✅ Post a comment to a task
+export const postTaskComment = async (req, res) => {
+  const { taskId } = req.params;
+  const { userId, text } = req.body;
+  if (!userId || !text) {
+    return res.status(400).json({ error: "User and text are required." });
+  }
+  try {
+    const task = await Task.findById(taskId);
+    if (!task) return res.status(404).json({ message: "Task not found" });
+
+    const comment = {
+      user: userId,
+      comment: text,
+      createdAt: new Date(),
+    };
+
+    task.comments.push(comment);
+    await task.save();
+
+    // Populate user info for response
+    await task.populate("comments.user", "name avatar");
+    const newComment = task.comments[task.comments.length - 1];
+
+    res.status(201).json({ comment: newComment });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+

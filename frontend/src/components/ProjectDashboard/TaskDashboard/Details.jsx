@@ -39,7 +39,7 @@ const TaskDetailsCard = ({
     <InfoRow
       icon={<CalendarMonthOutlinedIcon className="text-gray-400" fontSize="large" />}
       label="Due Date"
-      value={dueDate || "No due date set"}
+      value={dueDate ? new Date(dueDate).toLocaleDateString() : "No due date set"}
     />
   </div>
 );

@@ -41,27 +41,47 @@ function TaskPage() {
         {/* Main content and comments in left column */}
         <div className="flex flex-col w-full lg:w-2/3">
           <Container className="w-full">
-            <div className="mb-6 flex items-center">
-              <IconButton
-                onClick={() => navigate(-1)}
-                sx={{
-                  mr: 2,
-                  bgcolor: "#e0e7ff",
-                  color: "#2563eb",
-                  boxShadow: 1,
-                  "&:hover": { bgcolor: "#c7d2fe" },
-                }}
-                size="large"
-              >
-                <ArrowBackIosNewIcon />
-              </IconButton>
-              <h1 className="text-4xl font-bold mb-3">Task: {task.title}</h1>
+            <div className="mb-6">
+              <div className="flex items-center">
+                <IconButton
+                  onClick={() => navigate(-1)}
+                  sx={{
+                    mr: 2,
+                    ml: -5,
+                    bgcolor: "#ffffff",
+                    color: "#000000",
+                    boxShadow: 1,
+                    "&:hover": { bgcolor: "#c7d2fe" },
+                  }}
+                  size="medium"
+                >
+                  <ArrowBackIosNewIcon />
+                </IconButton>
+                <h1
+                  className="font-bold mb-1"
+                  style={{
+                    fontSize: "2.5rem",
+                    fontWeight: 700,
+                    maxWidth: "700px",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  Task: {task.title}
+                </h1>
+              </div>
               <Chip
                 label={task.priority?.toUpperCase() || "UNKNOWN"}
                 color={getPriorityColor(task.priority)}
                 variant="outlined"
                 size="small"
-                sx={{ fontWeight: 500, ml: 2 }}
+                sx={{
+                  fontWeight: 500,
+                  mt: 1,
+                  width: 110,
+                  fontSize: "1rem",
+                }}
               />
             </div>
 
@@ -86,7 +106,7 @@ function TaskPage() {
             priority={task.priority}
             dueDate={task.dueDate}
           />
-          <Actions task={task} members={members} />
+          <Actions task={task} members={members}  />
         </Container>
       </div>
     );

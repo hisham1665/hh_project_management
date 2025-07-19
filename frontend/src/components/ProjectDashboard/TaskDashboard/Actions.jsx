@@ -131,6 +131,7 @@ const Actions = ({ task, members, onTaskUpdated }) => {
     try {
       await axios.put(`/api/task/update-task/${task._id}`, { status: "done" });
       if (onTaskUpdated) onTaskUpdated();
+      navigate(-1);
     } catch (err) {
       // handle error
     }
@@ -164,6 +165,7 @@ const Actions = ({ task, members, onTaskUpdated }) => {
         priority: data.priority,
       });
       if (onTaskUpdated) onTaskUpdated();
+      navigate(-1);
     } catch (err) {
       // handle error
     }
@@ -172,12 +174,13 @@ const Actions = ({ task, members, onTaskUpdated }) => {
   return (
     <div className="bg-gray-50 rounded-xl p-4 w-full max-w-xs">
       <h2 className="text-lg font-bold mb-4 text-gray-900">Actions</h2>
-      <button
+      {task.status !== "done" && (<button
         className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded-lg mb-3 transition"
         onClick={handleMarkComplete}
-      >
+        >
         Mark as Complete
-      </button>
+      </button>)
+      }
       <button
         className="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 rounded-lg mb-3 transition"
         onClick={() => setEditOpen(true)}
