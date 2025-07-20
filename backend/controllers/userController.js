@@ -100,3 +100,32 @@ export const SearchUser = async (req, res) => {
   ]);
   res.json(users);
 }
+
+export const updateAvatarIndex = async (req, res) => {
+  const { id } = req.params; // <-- change here
+  const { avatarIndex } = req.body;
+
+  try {
+    const user = await User.findByIdAndUpdate(
+      id, // <-- use id here
+      { avatarIndex },
+      { new: true, runValidators: true }
+    );
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.json({
+      message: "Avatar updated successfully",
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        avatarIndex: user.avatarIndex,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+

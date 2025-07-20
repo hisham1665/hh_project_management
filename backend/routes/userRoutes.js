@@ -1,5 +1,5 @@
 import express from 'express';
-import { registerUser, loginUser, SearchUser } from '../controllers/userController.js';
+import { registerUser, loginUser, SearchUser, updateAvatarIndex } from '../controllers/userController.js';
 
 const Userrouter = express.Router();
 
@@ -11,6 +11,7 @@ Userrouter.post("/register", registerUser);
 // @desc    Login user
 Userrouter.post('/login', loginUser);
 Userrouter.get("/search", SearchUser);
+Userrouter.put("/update-avatar/:id", updateAvatarIndex);
 
 
 export default Userrouter;
