@@ -5,7 +5,8 @@
     "dotenv": "^17.1.0",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.16.2"
+    "mongoose": "^8.16.2",
+    "socket.io": "^4.8.1"
   },
   "name": "project-app",
   "version": "1.0.0",

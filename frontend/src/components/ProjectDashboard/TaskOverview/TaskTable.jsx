@@ -129,7 +129,16 @@ const TaskTable = ({ tasks, onTaskAdded, members }) => {
           <TableBody>
             {filteredTasks.length > 0 ? (
               [...filteredTasks].reverse().map((task, idx) => (
-                <TableRow key={idx} hover onClick={() => { navigate(`task/${task._id}`, { state: { task, projectId,members } }) }}>
+                <TableRow
+                  key={idx}
+                  hover
+                  onClick={() => {
+                    navigate(`task/${task._id}`, { state: { task, projectId, members } });
+                  }}
+                  sx={{
+                    cursor: "pointer", // 👈 Add this for pointer cursor
+                  }}
+                >
                   <TableCell
                     sx={{
                       backgroundColor: getTaskBgColor(task.status),

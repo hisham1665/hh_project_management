@@ -7,6 +7,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import TaskOverviewPage from "./TaskOverview/TaskOverview";
 import MembersOverview from "./MemberOverview/MembersOverview";
+import MessageOverview from "./MessageOverview/MessageOverview";
 const NAVBAR_HEIGHT = 70;
 
 const tabVariants = {
@@ -83,9 +84,9 @@ const ProjectDashboard = () => {
         );
       case "members":
         return <MembersOverview project={project} members={members} onMembersEdited={handleTaskAdded}/>;
-        case "messages":
-        return <div>Messages content goes here</div>;
-        default:
+      case "messages":
+        return <MessageOverview projectId={project._id} />;
+      default:
           return null;
     }
   };
