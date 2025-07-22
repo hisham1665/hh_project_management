@@ -1,20 +1,31 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Drawer, Box, Typography, Divider, Button, IconButton, Modal, Grid } from "@mui/material";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { avatar_links } from "../assets/Links/Avatar.js";
 import EditIcon from "@mui/icons-material/Edit";
+import LockResetIcon from '@mui/icons-material/LockReset';
 import axios from "axios";
+import ChangePassword from "./ChangePassword";
 
 export default function ProfileDrawer({ open, setOpen }) {
   const { user, logout, setUser } = useAuth();
   const navigate = useNavigate();
+
   const [avatarModalOpen, setAvatarModalOpen] = useState(false);
+  const [passwordModalOpen, setPasswordModalOpen] = useState(false);
   const [selectedAvatar, setSelectedAvatar] = useState(user?.avatarIndex ?? 0);
   const [confirming, setConfirming] = useState(false);
+
   const avatarUrl = user && user.avatarIndex !== undefined
     ? avatar_links[user.avatarIndex % avatar_links.length]
     : avatar_links[0];
+
+  useEffect(() => {
+    if (user) {
+      setSelectedAvatar(user.avatarIndex);
+    }
+  }, [user]);
 
   const handleLogout = () => {
     logout();
@@ -28,25 +39,36 @@ export default function ProfileDrawer({ open, setOpen }) {
   };
 
   const handleAvatarUpdate = async () => {
+    // 1. Safety check: This will now pass because the root cause is fixed.
+    if (!user?.token) {
+      console.error("Authentication Error: No token found in the user session.");
+      return;
+    }
+
     try {
-      const res = await axios.put(`/api/user/update-avatar/${user.id}`, { avatarIndex: selectedAvatar });
-      let updatedUser;
+      // 2. Send the API request with the Authorization header.
+      const res = await axios.put(
+        `/api/user/update-avatar/${user.id}`,
+        { avatarIndex: selectedAvatar },
+        { headers: { Authorization: `Bearer ${user.token}` } }
+      );
+
       if (res.data && res.data.user) {
-        updatedUser = res.data.user;
-      } else {
-        updatedUser = { ...user, avatarIndex: selectedAvatar };
+        // 3. THE CRITICAL FIX: Create the new, valid session object.
+        // This merges the existing session (which has the token) with the
+        // new user details from the API, guaranteeing the token is never lost.
+        const updatedSession = { ...user, ...res.data.user };
+
+        // 4. Atomically update the application state.
+        setUser(updatedSession);
+        localStorage.setItem("user", JSON.stringify(updatedSession));
+        
+        // 5. Update UI and close modals.
+        setConfirming(false);
+        setAvatarModalOpen(false);
       }
-      // This will now correctly update the global state
-      setUser(updatedUser); 
-      // This ensures the change persists on page refresh
-      localStorage.setItem("user", JSON.stringify(updatedUser)); 
-      
-      setSelectedAvatar(updatedUser.avatarIndex);
-      setConfirming(false);
-      // This will now execute and close the modal
-      setAvatarModalOpen(false); 
     } catch (err) {
-      console.error("Failed to update avatar:", err);
+      console.error("Failed to update avatar:", err.response?.data?.message || err.message);
     }
   };
 
@@ -90,9 +112,14 @@ export default function ProfileDrawer({ open, setOpen }) {
         </Box>
         <Divider className="mb-4" />
         <Box className="flex-1">
-          <Typography variant="body2" className="text-gray-600">
-            Welcome to your profile drawer! 🎉
-          </Typography>
+          <Button
+            fullWidth
+            startIcon={<LockResetIcon />}
+            onClick={() => setPasswordModalOpen(true)}
+            sx={{ justifyContent: 'flex-start', textTransform: 'none', color: 'text.secondary', mb: 1 }}
+          >
+            Change Password
+          </Button>
         </Box>
         <Button
           variant="contained"
@@ -189,6 +216,14 @@ export default function ProfileDrawer({ open, setOpen }) {
             </Box>
           )}
         </Box>
+      </Modal>
+
+      <Modal
+        open={passwordModalOpen}
+        onClose={() => setPasswordModalOpen(false)}
+        aria-labelledby="change-password-modal"
+      >
+        <ChangePassword onClose={() => setPasswordModalOpen(false)} />
       </Modal>
     </Drawer>
   );

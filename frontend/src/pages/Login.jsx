@@ -36,7 +36,7 @@ export default function LoginPage() {
       const response = await axios.post("/api/user/login", { email, password });
       if (response.status === 200) {
         console.log("Login successful:", response);
-        login(response.data.user); 
+        login(response.data); 
         setSuccess("Login successful! Redirecting...");
         setTimeout(() => {
           navigate("/dashboard");

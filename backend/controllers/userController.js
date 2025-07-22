@@ -67,14 +67,11 @@ export const loginUser = async (req, res) => {
 
     // Send response
     res.status(200).json({
-      message: 'Login successful',
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        avatarIndex: user.avatarIndex,
-      },
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      avatarIndex: user.avatarIndex,
       token,
     });
 
@@ -110,10 +107,12 @@ export const updateAvatarIndex = async (req, res) => {
       id, // <-- use id here
       { avatarIndex },
       { new: true, runValidators: true }
-    );
+    ).select("-password"); // Exclude password from the returned user
+
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
+    // The CORRECTED response: a nested object with only the changed data
     res.json({
       message: "Avatar updated successfully",
       user: {
@@ -126,6 +125,45 @@ export const updateAvatarIndex = async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+};
+
+export const changePassword = async (req, res) => {
+  // The user's ID is attached to req.user by the auth middleware
+  const { id } = req.user;
+  const { oldPassword, newPassword } = req.body;
+
+  if (!oldPassword || !newPassword) {
+    return res.status(400).json({ message: 'Old and new passwords are required.' });
+  }
+
+  if (newPassword.length < 6) {
+    return res.status(400).json({ message: 'New password must be at least 6 characters long.' });
+  }
+
+  try {
+    const user = await User.findById(id);
+    if (!user) {
+      // This case is unlikely if auth middleware is working, but it's good practice
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    // Check if the old password is correct
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Incorrect old password.' });
+    }
+
+    // Hash the new password and update the user
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedNewPassword;
+    await user.save();
+
+    res.status(200).json({ message: 'Password changed successfully.' });
+
+  } catch (err) {
+    console.error('Error changing password:', err);
+    res.status(500).json({ error: 'An internal server error occurred.' });
   }
 };
 
