@@ -39,14 +39,11 @@ export default function ProfileDrawer({ open, setOpen }) {
   };
 
   const handleAvatarUpdate = async () => {
-    // 1. Safety check: This will now pass because the root cause is fixed.
     if (!user?.token) {
       console.error("Authentication Error: No token found in the user session.");
       return;
     }
-
     try {
-      // 2. Send the API request with the Authorization header.
       const res = await axios.put(
         `/api/user/update-avatar/${user.id}`,
         { avatarIndex: selectedAvatar },
@@ -54,16 +51,9 @@ export default function ProfileDrawer({ open, setOpen }) {
       );
 
       if (res.data && res.data.user) {
-        // 3. THE CRITICAL FIX: Create the new, valid session object.
-        // This merges the existing session (which has the token) with the
-        // new user details from the API, guaranteeing the token is never lost.
         const updatedSession = { ...user, ...res.data.user };
-
-        // 4. Atomically update the application state.
         setUser(updatedSession);
         localStorage.setItem("user", JSON.stringify(updatedSession));
-        
-        // 5. Update UI and close modals.
         setConfirming(false);
         setAvatarModalOpen(false);
       }

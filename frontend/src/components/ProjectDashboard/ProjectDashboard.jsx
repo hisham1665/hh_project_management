@@ -1,7 +1,7 @@
 // Dashboard.jsx
 import React, { use, useEffect, useState } from "react";
 import ProjectOverview from "./ProjectOverview/ProjectOverview";
-import { FaTasks, FaUsers, FaHome, FaBars, FaTimes, FaRocketchat } from "react-icons/fa";
+import { FaTasks, FaUsers, FaHome, FaBars, FaTimes, FaRocketchat, FaArrowLeft } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -145,6 +145,16 @@ const ProjectDashboard = () => {
         >
           <FaRocketchat/> Messages
         </button>
+
+        <div className="flex-grow"></div>
+        <hr className="my-2 border-gray-200" />
+
+        <button
+          className="flex items-center gap-3 px-3 py-2 rounded-md text-left transition-colors text-gray-700 hover:bg-gray-100"
+          onClick={() => navigate("/dashboard")}
+        >
+          <FaArrowLeft /> Back to Dashboard
+        </button>
       </aside>
 
       {/* Sidebar for mobile (drawer style) */}
@@ -239,6 +249,19 @@ const ProjectDashboard = () => {
           }}
         >
           <FaRocketchat/> Messages
+        </button>
+
+        <div className="flex-grow"></div>
+        <hr className="my-2 border-gray-200" />
+
+        <button
+          className="flex items-center gap-3 px-3 py-2 rounded-md text-left transition-colors text-gray-700 hover:bg-gray-100"
+          onClick={() => {
+            navigate("/dashboard");
+            setSidebarOpen(false);
+          }}
+        >
+          <FaArrowLeft /> Back to Dashboard
         </button>
       </aside>
 

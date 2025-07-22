@@ -39,7 +39,6 @@ export default function ChangePassword({ onClose }) {
 
     setLoading(true);
     try {
-      // The token is now reliably available here
       const res = await axios.post(
         '/api/user/change-password',
         {
