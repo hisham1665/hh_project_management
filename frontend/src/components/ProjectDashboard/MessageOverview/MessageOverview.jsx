@@ -5,17 +5,17 @@ import { useAuth } from "../../../context/AuthContext";
 import MessageBubble from "./MessageBubble";
 import MessageInput from "./MessageInput";
 
-const socket = io("http://localhost:5000");
+const socket = io();
 
 function MessageOverview({ projectId }) {
   const [messages, setMessages] = useState([]);
-  const bottomRef = useRef(null); // ⬅️ Anchor for scroll
+  const bottomRef = useRef(null); 
   const { user } = useAuth();
 
-  // Fetch messages + socket listeners
+  
   useEffect(() => {
     axios.get(`/api/message/get-messages/${projectId}`).then(res => {
-      setMessages(res.data.reverse()); // reverse for chronological order
+      setMessages(res.data.reverse());
     });
 
     socket.emit("joinProject", projectId);
