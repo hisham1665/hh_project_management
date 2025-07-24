@@ -48,19 +48,41 @@ io.on('connection', (socket) => {
     console.log('User disconnected:', socket.id);
   });
 });
-
 if(process.env.NODE_ENV === "production"){
   app.use(express.static(path.join(__dirname, "frontend/dist")))
   console.log("Running in production. Serving frontend...");
-  app.get("*" , (req, res) => {
-    res.sendFile(path.resolve(__dirname, "frontend" , "dist" , "index.html"))
-  })
-}
-
-server.listen(5000, () => {
-  Connectdb();
-  console.log("server run at http://localhost:5000");
-  mongoose.connection.on('connected', () => {
-    console.log('Mongoose connected to:', mongoose.connection.name);
+  app.get(/^\/(?!api).*/, (req, res) => {
+    console.log("Catch-all route hit:", req.originalUrl);
+    res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
   });
-});
+}
+// --- THE FIX: A truly robust startup sequence ---
+const startServer = async () => {
+  try {
+    // 1. Connect to the database FIRST.
+    await Connectdb();
+    console.log('✅ Mongoose connected successfully.');
+
+    // 2. Add error handling for the server listening process.
+    server.on('error', (error) => {
+      if (error.code === 'EADDRINUSE') {
+        console.error(`❌ FATAL ERROR: Port 5000 is already in use by another application.`);
+      } else {
+        console.error(`❌ FATAL ERROR during server startup:`, error);
+      }
+      process.exit(1);
+    });
+
+    // 3. Only if the DB is connected, start listening.
+    server.listen(5000, () => {
+      console.log("✅ Server is ready and listening at http://localhost:5000");
+    });
+
+  } catch (error) {
+    // 4. If the DB connection fails, log the error and exit.
+    console.error("❌ FATAL ERROR: Failed to connect to the database. Server will not start.", error);
+    process.exit(1);
+  }
+};
+startServer();
+// Start the server using the new function
