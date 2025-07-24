@@ -21,7 +21,7 @@ const io = new Server(server, {
   }
 });
 
-// Make io available in controllers
+
 app.set('io', io);
 
 app.use(cors({
@@ -48,6 +48,14 @@ io.on('connection', (socket) => {
     console.log('User disconnected:', socket.id);
   });
 });
+
+if(process.env.NODE_ENV === "production"){
+  app.use(express.static(path.join(__dirname, "frontend/dist")))
+  console.log("Running in production. Serving frontend...");
+  app.get("*" , (req, res) => {
+    res.sendFile(path.resolve(__dirname, "frontend" , "dist" , "index.html"))
+  })
+}
 
 server.listen(5000, () => {
   Connectdb();
