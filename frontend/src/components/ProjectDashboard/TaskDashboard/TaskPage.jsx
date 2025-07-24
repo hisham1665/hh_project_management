@@ -32,7 +32,6 @@ function TaskPage() {
   const navigate = useNavigate();
 
   if (!task) return <div className="text-center mt-20">No task data found</div>;
-  console.log("TaskPage", task, projectId);
 
   if (isMdUp) {
     // Desktop & large screen layout (original)
@@ -148,7 +147,6 @@ function TaskPage() {
         </div>
       </Container>
 
-      {/* Details and actions below main info */}
       <Container maxWidth="lg" className="w-full mt-2">
         <TaskDetailsCard
           assigneed={task.assignedTo}

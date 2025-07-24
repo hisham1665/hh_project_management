@@ -22,6 +22,7 @@ export default function SignUp() {
     password: "",
   });
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState(""); // Add success state
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
@@ -31,6 +32,7 @@ export default function SignUp() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setSuccess(""); // Clear previous success message
 
     if (!formData.name || !formData.email || !formData.password) {
       setError("All fields are required.");
@@ -45,9 +47,11 @@ export default function SignUp() {
     try {
       const res = await axios.post("/api/user/register", formData);
       if (res.status === 201) {
-        // Log the user in immediately after successful registration
-        login(res.data);
-        navigate("/"); // Redirect to the main dashboard
+        login(res.data.user);
+        setSuccess("Account created successfully! Redirecting..."); 
+        setTimeout(() => {
+          navigate("/dashboard"); 
+        }, 1200);
       }
     } catch (err) {
       setError(err.response?.data?.message || "An unexpected error occurred. Please try again.");
@@ -77,6 +81,11 @@ export default function SignUp() {
           {error && (
             <Alert severity="error" sx={{ mb: 2, width: '100%' }}>
               {error}
+            </Alert>
+          )}
+          {success && (
+            <Alert severity="success" sx={{ mb: 2, width: '100%' }}>
+              {success}
             </Alert>
           )}
           <TextField
@@ -135,4 +144,4 @@ export default function SignUp() {
       </Box>
     </Container>
   );
-}    
+}

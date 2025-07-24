@@ -10,6 +10,7 @@ import MainLayout from "./components/MainLayout";
 
 import ProjectDashboard from "./components/ProjectDashboard/ProjectDashboard";
 import TaskPage from "./components/ProjectDashboard/TaskDashboard/TaskPage";
+import SignUp from "./pages/SignUp";
 
 function App() {
 
@@ -18,6 +19,7 @@ function App() {
        <Router>
       <Routes>
         <Route path="/" element={<LandingPage />} />
+        <Route path="/sign-up" element={<SignUp />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/dashboard" element={<AccessRoute requireAuth={true} redirectTo="/404" ><MainLayout /></AccessRoute>} >
           <Route index element={<Dashboard />} />

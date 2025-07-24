@@ -35,7 +35,6 @@ export default function LoginPage() {
     try {
       const response = await axios.post("/api/user/login", { email, password });
       if (response.status === 200) {
-        console.log("Login successful:", response);
         login(response.data); 
         setSuccess("Login successful! Redirecting...");
         setTimeout(() => {
@@ -142,15 +141,6 @@ export default function LoginPage() {
                   className="bg-white rounded-lg"
                 />
               </Box>
-              <Box className="text-right mb-6">
-                <Button
-                  href="#"
-                  size="small"
-                  className="!text-indigo-600 hover:!underline"
-                >
-                  Forgot Password?
-                </Button>
-              </Box>
               <motion.div
                 whileHover={{ scale: 1.03, boxShadow: "0 8px 24px #6366f133" }}
                 whileTap={{ scale: 0.98 }}
@@ -179,7 +169,7 @@ export default function LoginPage() {
                 <Typography variant="body2" className="text-gray-600">
                   Don't have an account?{" "}
                   <Button
-                    href="#"
+                    href="/sign-up"
                     className="!text-indigo-700 hover:!underline !font-bold !p-0 !min-w-0"
                   >
                     Sign Up

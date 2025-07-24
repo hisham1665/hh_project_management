@@ -8,7 +8,7 @@ export default function MainLayout() {
     <div className="min-h-screen bg-slate-50 font-inter">
       <Navbar />
       <div className="mx-auto px-4 ">
-        <Outlet /> {/* All nested route components will render here */}
+        <Outlet /> 
       </div>
     </div>
   );

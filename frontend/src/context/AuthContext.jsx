@@ -1,30 +1,27 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 
-// Create the context
 const AuthContext = createContext(null);
 
-// AuthProvider component
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Load user from localStorage when the app starts
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
-    setLoading(false); // Mark loading as done after checking localStorage
+    setLoading(false); 
   }, []);
 
-  // Login function
+
   const login = (userData) => {
     setUser(userData);
-    console.log("User logged in:", userData);
     localStorage.setItem("user", JSON.stringify(userData));
   };
 
-  // Logout function
+
   const logout = () => {
     setUser(null);
     localStorage.removeItem("user");
@@ -36,7 +33,7 @@ export function AuthProvider({ children }) {
     <AuthContext.Provider
       value={{
         user,
-        setUser, // <-- Add this line
+        setUser,
         login,
         logout,
         loading,
@@ -48,7 +45,6 @@ export function AuthProvider({ children }) {
   );
 }
 
-// Hook to use the AuthContext
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) {
