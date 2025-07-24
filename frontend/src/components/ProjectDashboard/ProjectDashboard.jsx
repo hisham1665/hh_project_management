@@ -158,7 +158,7 @@ const ProjectDashboard = () => {
       </aside>
 
       {/* Sidebar for mobile (drawer style) */}
-      <div className="md:hidden absolute top-4 left-4 z-20">
+      <div className="md:hidden absolute top-4 left-2 z-20">
         <button
           className="p-2 rounded-md bg-blue-600 text-white shadow-md"
           onClick={() => setSidebarOpen(true)}
@@ -266,7 +266,7 @@ const ProjectDashboard = () => {
       </aside>
 
       {/* Main Content with framer-motion animation */}
-      <main className="flex-1 h-full overflow-y-auto bg-[#F9FBFD] p-6 relative z-10">
+      <main className="flex-1 h-full overflow-y-auto bg-[#F9FBFD] p-1 relative z-10">
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}

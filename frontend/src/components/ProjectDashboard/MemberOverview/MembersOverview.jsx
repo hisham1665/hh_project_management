@@ -5,7 +5,7 @@ import AddMembers from './AddMembers'
 
 function MembersOverview({project, members,  onMembersEdited }) {
   return (
-    <div className='p-6 bg-[#F9FBFD] min-h-screen w-full overflow-y-auto'>
+    <div className='p-2 bg-[#F9FBFD] min-h-screen w-full overflow-y-auto'>
       <h1 className='text-3xl font-bold mb-1'>
        {project.name} : Members Overview
       </h1> 

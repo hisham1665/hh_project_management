@@ -52,7 +52,7 @@ const ProjectOverview = ({ project, tasks, members }) => {
     .slice(0, 5);
 
   return (
-    <div className="p-6 bg-[#F9FBFD] min-h-screen w-full overflow-y-auto">
+    <div className="p-2 bg-[#F9FBFD] min-h-screen w-full overflow-y-auto">
       <h1 className="text-3xl font-bold mb-1">
         Project : {project?.name || "NO Name"}
       </h1>
