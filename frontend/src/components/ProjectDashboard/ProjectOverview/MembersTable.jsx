@@ -30,6 +30,8 @@ function MembersTable({
   const [selectedMember, setSelectedMember] = useState(null);
   const [open, setOpen] = useState(false);
   const { user } = useAuth();
+  console.log("Members:", members , "Project:", project);
+  console.log("Removing member:", selectedMember);
   const handleCellClick = (member) => {
     if (!isMembersPage) return;
     setSelectedMember(member);
@@ -164,8 +166,8 @@ function MembersTable({
         </DialogContent>
         <DialogActions sx={{ justifyContent: "space-between", px: 4, pb: 3 }}>
           {selectedMember &&
-            selectedMember.role !== "admin" &&
-            user.role === "admin" && (
+            String(user?.id) === String(project.createdBy._id) && // Only project admin can remove
+            String(selectedMember.user._id) !== String(project.createdBy._id) && ( // Cannot remove the project admin
               <Button onClick={handleRemove} color="error" variant="contained">
                 Remove Member
               </Button>
