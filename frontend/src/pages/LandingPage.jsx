@@ -1,23 +1,35 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   AppBar,
   Toolbar,
   Typography,
   Button,
   IconButton,
+  Drawer,
+  List,
+  ListItem,
+  ListItemText,
+  Box,
+  Link as MuiLink,
+  Avatar,
   Container,
   Grid,
   Card,
   CardContent,
-  Box,
-  Link as MuiLink,
-  Avatar,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext"; // Add this import
-
+import { useTheme } from "@mui/material/styles";
+import { useMediaQuery } from "@mui/material";
+import HomeIcon from "@mui/icons-material/Home";
+import StarIcon from "@mui/icons-material/Star";
+import ChatIcon from "@mui/icons-material/Chat";
+import HelpIcon from "@mui/icons-material/Help";
+import LoginIcon from "@mui/icons-material/Login";
+import EmojiEmotionsIcon from "@mui/icons-material/EmojiEmotions";
+import { avatar_links } from "../assets/Links/Avatar";
 // Dummy data for features and testimonials
 const features = [
   {
@@ -83,7 +95,6 @@ const cardVariants = {
   },
 };
 
-
 const CARD_HEIGHT = 180; // px
 const CARD_WIDTH = 550; // px, adjust as desired
 const testimonialVariants = {
@@ -98,6 +109,9 @@ const testimonialVariants = {
 export default function LandingPage() {
   const navigate = useNavigate();
   const { user } = useAuth(); // Get user from auth context
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   function handleButton() {
     if (user) {
@@ -109,7 +123,7 @@ export default function LandingPage() {
 
   return (
     <Box className="bg-gradient-to-br from-blue-100 to-blue-300 min-h-screen flex flex-col">
-      {/* Navbar */}
+      {/* Responsive Navbar */}
       <AppBar
         position="static"
         color="transparent"
@@ -117,48 +131,140 @@ export default function LandingPage() {
         className="!bg-transparent"
       >
         <Toolbar>
-          <IconButton
-            edge="start"
-            color="primary"
-            aria-label="menu"
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton>
+          {isMobile && (
+            <IconButton
+              edge="start"
+              color="primary"
+              aria-label="menu"
+              sx={{ mr: 2 }}
+              onClick={() => setDrawerOpen(true)}
+            >
+              <MenuIcon />
+            </IconButton>
+          )}
           <Typography
             variant="h6"
             className="flex-grow !text-blue-900 font-extrabold"
           >
             HH Project
           </Typography>
-          <MuiLink
-            href="#features"
-            className="!mx-4 !text-blue-800 font-semibold !no-underline hover:!underline"
-          >
-            Features
-          </MuiLink>
-          <MuiLink
-            href="#testimonials"
-            className="!mx-4 !text-blue-800 font-semibold !no-underline hover:!underline"
-          >
-            Testimonials
-          </MuiLink>
-          <MuiLink
-            href="#faq"
-            className="!mx-4 !text-blue-800 font-semibold !no-underline hover:!underline"
-          >
-            FAQ
-          </MuiLink>
-          <Button
-            variant="contained"
-            color="primary"
-            className="!rounded-full !ml-8 !bg-blue-700 !text-white !font-bold"
-            onClick={handleButton}
-          >
-            Login
-          </Button>
+          {!isMobile && (
+            <>
+              <MuiLink
+                href="#features"
+                className="!mx-4 !text-blue-800 font-semibold !no-underline hover:!underline"
+              >
+                Features
+              </MuiLink>
+              <MuiLink
+                href="#testimonials"
+                className="!mx-4 !text-blue-800 font-semibold !no-underline hover:!underline"
+              >
+                Testimonials
+              </MuiLink>
+              <MuiLink
+                href="#faq"
+                className="!mx-4 !text-blue-800 font-semibold !no-underline hover:!underline"
+              >
+                FAQ
+              </MuiLink>
+              <Button
+                variant="contained"
+                color="primary"
+                className="!rounded-full !ml-8 !bg-blue-700 !text-white !font-bold"
+                onClick={handleButton}
+              >
+                Login
+              </Button>
+            </>
+          )}
         </Toolbar>
       </AppBar>
+      {/* Mobile Drawer */}
+      <Drawer
+        anchor="left"
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        PaperProps={{
+          sx: {
+            background: "linear-gradient(135deg, #dbeafe 0%, #93c5fd 100%)", // matches from-blue-100 to-blue-300
+            backdropFilter: "blur(8px)",
+            boxShadow: 8,
+            borderTopRightRadius: 32,
+            borderBottomRightRadius: 32,
+            width: 260,
+            overflow: "hidden",
+          },
+        }}
+      >
+        <motion.div
+          initial={{ x: -80, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ type: "spring", bounce: 0.4, duration: 0.6 }}
+          style={{ height: "100%" }}
+        >
+          <Box
+            sx={{
+              py: 3,
+              px: 2,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 1,
+            }}
+          >
+            {user && (
+              <>
+                <Avatar
+                  src={avatar_links[user.avatarIndex] || ""}
+                  sx={{
+                    width: 64,
+                    height: 64,
+                    boxShadow: 3,
+                    mb: 1,
+                    border: "3px solid #fff",
+                    background: "#fff",
+                  }}
+                />
+                <Typography
+                  variant="subtitle1"
+                  sx={{
+                    fontWeight: "bold",
+                    color: "#2563eb",
+                    mb: 1,
+                    letterSpacing: 1,
+                  }}
+                >
+                  Hi, {user.name}!
+                  <EmojiEmotionsIcon sx={{ ml: 1, color: "#f59e42" }} />
+                </Typography>
+              </>
+            )}
+          </Box>
+          <List>
+            <ListItem button component="a" href="/" sx={{ py: 2 }}>
+              <HomeIcon sx={{ mr: 2, color: "#2563eb" }} />
+              <ListItemText primary="Home" />
+            </ListItem>
+            <ListItem button component="a" href="#features" sx={{ py: 2 }}>
+              <StarIcon sx={{ mr: 2, color: "#f59e42" }} />
+              <ListItemText primary="Features" />
+            </ListItem>
+            <ListItem button component="a" href="#testimonials" sx={{ py: 2 }}>
+              <ChatIcon sx={{ mr: 2, color: "#10b981" }} />
+              <ListItemText primary="Testimonials" />
+            </ListItem>
+            <ListItem button component="a" href="#faq" sx={{ py: 2 }}>
+              <HelpIcon sx={{ mr: 2, color: "#f43f5e" }} />
+              <ListItemText primary="FAQ" />
+            </ListItem>
+            <ListItem button onClick={handleButton} sx={{ py: 2 }}>
+              <LoginIcon sx={{ mr: 2, color: "#2563eb" }} />
+              <ListItemText primary={user ? "Dashboard" : "Login"} />
+            </ListItem>
+          </List>
+        </motion.div>
+      </Drawer>
 
       {/* Hero Section */}
       <Box className="py-20 flex flex-col items-center text-center">
@@ -212,53 +318,59 @@ export default function LandingPage() {
           All The Tools You Need In One Place
         </Typography>
         <Container maxWidth="xl" className="mt-10">
-      <Grid container spacing={4} justifyContent="center" alignItems="stretch">
-        {features.map((feat, i) => (
           <Grid
-            item
-            xs={12}
-            sm={6}
-            key={feat.title}
-            style={{ display: "flex", justifyContent: "center" }}
+            container
+            spacing={4}
+            justifyContent="center"
+            alignItems="stretch"
           >
-            <motion.div
-              variants={cardVariants}
-              initial="offscreen"
-              whileInView="onscreen"
-              viewport={{ once: true, amount: 0.2 }}
-              style={{ width: CARD_WIDTH }}
-            >
-              <Card
-                className="rounded-xl shadow-xl border-2 border-blue-100 hover:scale-[1.03] hover:border-blue-400 transition-all"
-                elevation={0}
-                style={{
-                  background: "linear-gradient(135deg, #f5f7fa 0%, #c3e0f7 100%)",
-                  height: CARD_HEIGHT,
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                }}
+            {features.map((feat, i) => (
+              <Grid
+                item
+                xs={12}
+                sm={6}
+                key={feat.title}
+                style={{ display: "flex", justifyContent: "center" }}
               >
-                <CardContent>
-                  <Typography
-                    variant="h5"
-                    className="!font-bold !text-blue-700 !mb-2 tracking-wide"
+                <motion.div
+                  variants={cardVariants}
+                  initial="offscreen"
+                  whileInView="onscreen"
+                  viewport={{ once: true, amount: 0.2 }}
+                  style={{ width: CARD_WIDTH }}
+                >
+                  <Card
+                    className="rounded-xl shadow-xl border-2 border-blue-100 hover:scale-[1.03] hover:border-blue-400 transition-all"
+                    elevation={0}
+                    style={{
+                      background:
+                        "linear-gradient(135deg, #f5f7fa 0%, #c3e0f7 100%)",
+                      height: CARD_HEIGHT,
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                    }}
                   >
-                    {feat.title}
-                  </Typography>
-                  <Typography
-                    variant="body1"
-                    className="!text-gray-700 !mb-2"
-                  >
-                    {feat.desc}
-                  </Typography>
-                </CardContent>
-              </Card>
-            </motion.div>
+                    <CardContent>
+                      <Typography
+                        variant="h5"
+                        className="!font-bold !text-blue-700 !mb-2 tracking-wide"
+                      >
+                        {feat.title}
+                      </Typography>
+                      <Typography
+                        variant="body1"
+                        className="!text-gray-700 !mb-2"
+                      >
+                        {feat.desc}
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              </Grid>
+            ))}
           </Grid>
-        ))}
-      </Grid>
-    </Container>
+        </Container>
       </Container>
 
       {/* Testimonials */}
@@ -316,7 +428,11 @@ export default function LandingPage() {
       </Box>
 
       {/* FAQ */}
-      <Container maxWidth="xl"  id="faq" className="py-20 justify-center justify-items-center">
+      <Container
+        maxWidth="xl"
+        id="faq"
+        className="py-20 justify-center justify-items-center"
+      >
         <Typography
           variant="h4"
           className="!font-bold !text-blue-900 mb-10 text-center"
@@ -420,35 +536,40 @@ export default function LandingPage() {
       </Container>
 
       {/* Call to Action */}
-       <Box className="py-20 bg-gradient-to-tr from-blue-100 to-blue-200">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        whileInView={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.8 }}
-        className="flex flex-col items-center"
-      >
-        <Typography variant="h4" className="!font-bold !text-blue-900 mb-10 p-5" align="center">
-          Ready to boost your productivity?
-        </Typography>
-        <Typography
-          variant="body1"
-          className="!text-gray-700 mb-6 max-w-xl p-5"
-          align="center"
-          sx={{ textAlign: "center" }}
+      <Box className="py-20 bg-gradient-to-tr from-blue-100 to-blue-200">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8 }}
+          className="flex flex-col items-center"
         >
-          Join thousands of teams already managing their work better with ProjectFlow. Sign up now and take your projects to the next level!
-        </Typography>
-        <Button
-          variant="contained"
-          color="primary"
-          size="large"
-          className="!rounded-full !px-8 !py-3 !bg-blue-600 !text-white !shadow-lg hover:!bg-blue-700 transition"
-          onClick={handleButton}
-        >
-          Get Started Free
-        </Button>
-      </motion.div>
-    </Box>
+          <Typography
+            variant="h4"
+            className="!font-bold !text-blue-900 mb-10 p-5"
+            align="center"
+          >
+            Ready to boost your productivity?
+          </Typography>
+          <Typography
+            variant="body1"
+            className="!text-gray-700 mb-6 max-w-xl p-5"
+            align="center"
+            sx={{ textAlign: "center" }}
+          >
+            Join thousands of teams already managing their work better with
+            ProjectFlow. Sign up now and take your projects to the next level!
+          </Typography>
+          <Button
+            variant="contained"
+            color="primary"
+            size="large"
+            className="!rounded-full !px-8 !py-3 !bg-blue-600 !text-white !shadow-lg hover:!bg-blue-700 transition"
+            onClick={handleButton}
+          >
+            Get Started Free
+          </Button>
+        </motion.div>
+      </Box>
 
       <footer className="py-8 text-center text-gray-500">
         © {new Date().getFullYear()} ProjectFlow. All rights reserved.
