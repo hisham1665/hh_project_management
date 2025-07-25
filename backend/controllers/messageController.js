@@ -2,13 +2,13 @@ import Message from "../models/messages.model.js";
 
 export const addMessage = async (req, res) => {
   try {
-    const { projectId, content , userId} = req.body;
+    const { projectId, content , userId } = req.body;
 
     if (!projectId || !content) {
       return res.status(400).json({ message: 'Project ID and content are required.' });
     }
 
-    // Assuming you have a Message model to handle messages
+    // Create the message
     const newMessage = await Message.create({
       project : projectId,
       sender : userId,
@@ -16,10 +16,14 @@ export const addMessage = async (req, res) => {
       createdAt: new Date(),
     });
 
-    const io = req.app.get('io');
-    io.to(projectId).emit('messageEvent', { type: 'add', message: newMessage });
+    // THE FIX: Populate sender before emitting
+    const populatedMessage = await Message.findById(newMessage._id)
+      .populate('sender', 'name avatarIndex');
 
-    res.status(201).json(newMessage);
+    const io = req.app.get('io');
+    io.to(projectId).emit('messageEvent', { type: 'add', message: populatedMessage });
+
+    res.status(201).json(populatedMessage);
   } catch (error) {
     console.error('Error adding message:', error);
     res.status(500).json({ message: 'Internal server error' });

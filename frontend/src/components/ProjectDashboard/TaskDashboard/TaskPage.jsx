@@ -120,6 +120,7 @@ function TaskPage() {
             onClick={() => navigate(-1)}
             sx={{
               mr: 2,
+              ml: -5,
               bgcolor: "#e0e7ff",
               color: "#2563eb",
               boxShadow: 1,

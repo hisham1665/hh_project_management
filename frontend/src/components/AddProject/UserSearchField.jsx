@@ -1,16 +1,19 @@
 import React, { useState } from "react";
 import { Autocomplete, TextField, Chip, CircularProgress } from "@mui/material";
 import axios from "axios";
+import { useAuth } from "../../context/AuthContext";
 
 export default function UserSearchField({ selectedUsers, onChange }) {
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
-
+  const { user } = useAuth(); // Assuming you have a context or hook to get the current user
   const handleSearch = async (query) => {
     if (!query) return;
     try {
       setLoading(true);
-      const res = await axios.get(`/api/user/search?q=${query}`);
+      const res = await axios.get(`/api/user/search?q=${query}`,{
+          headers: { Authorization: `Bearer ${user.token}` },
+        });
       setOptions(res.data || []);
     } catch (error) {
       console.error("Atlas search error:", error);

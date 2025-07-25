@@ -14,6 +14,7 @@ import {
   Alert,
 } from '@mui/material';
 import axios from 'axios';
+import { useAuth } from '../../../context/AuthContext';
 
 function AddMembers({ project, onMembersEdited }) {
   const [open, setOpen] = useState(false);
@@ -21,7 +22,7 @@ function AddMembers({ project, onMembersEdited }) {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
-
+  const { user } = useAuth(); 
   const handleOpen = () => {
     setOpen(true);
     setQuery('');
@@ -37,7 +38,9 @@ function AddMembers({ project, onMembersEdited }) {
   const handleSearch = async () => {
     setLoading(true);
     try {
-        const res = await axios.get(`/api/user/search?q=${query}`);
+        const res = await axios.get(`/api/user/search?q=${query}`,{
+          headers: { Authorization: `Bearer ${user.token}` },
+        });
       setUsers(res.data || []);
     } catch (err) {
       console.error('Search failed:', err);

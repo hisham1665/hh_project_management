@@ -158,7 +158,7 @@ const ProjectDashboard = () => {
       </aside>
 
       {/* Sidebar for mobile (drawer style) */}
-      <div className="md:hidden absolute top-4 left-2 z-20">
+      <div className="md:hidden absolute top-12 left-2 z-20">
         <button
           className="p-2 rounded-md bg-blue-600 text-white shadow-md"
           onClick={() => setSidebarOpen(true)}

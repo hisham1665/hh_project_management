@@ -51,7 +51,9 @@ export default function TaskEntry({ tasks, onChange }) {
     if (!query) return;
     setLoadingUser(true);
     try {
-      const res = await axios.get(`/api/user/search?q=${query}`);
+      const res = await axios.get(`/api/user/search?q=${query}`,{
+          headers: { Authorization: `Bearer ${user.token}` },
+        });
       setUserOptions(res.data || []);
     } catch (err) {
       setUserOptions([]);

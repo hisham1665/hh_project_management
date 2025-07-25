@@ -16,6 +16,7 @@ const TaskFilterBar = () => {
             borderRadius: 2,
             textTransform: "none",
             backgroundColor: "#f1f5f9",
+            margin: "2px",
             ":hover": { backgroundColor: "#e2e8f0" },
           }}
         >

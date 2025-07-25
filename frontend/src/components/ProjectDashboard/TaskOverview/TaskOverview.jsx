@@ -6,7 +6,7 @@ import TaskTable from "./TaskTable";
 
 const TaskOverviewPage = ({project , tasks , onTaskAdded , members}) => {
   return (
-    <Box className="bg-[#f8fafc] min-h-screen p-2 rounded-3xl">
+    <Box className="bg-[#f8fafc] min-h-screen p-2 pr-6 rounded-3xl">
      <h1 className="text-3xl font-bold mb-1">Project : {`${project.name} Tasks `|| "NO Name"}</h1>
       <p className="text-md text-gray-600 mb-6">
         {project.description || "No description available for this project."}
