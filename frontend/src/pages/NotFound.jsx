@@ -35,16 +35,16 @@ export default function NotFound() {
         </Typography>
         <Typography
           variant="body1"
-          className="text-gray-600 mb-8 text-center"
+          className="text-gray-600 mb-10 text-center"
         >
           The page you’re looking for doesn’t exist.<br />
-          But hey, you just unlocked a little surprise dopamine hike! 🎉
+          But hey, don’t worry, you’re still awesome 🚀
         </Typography>
         <Button
           variant="contained"
           color="warning"
           size="large"
-          className="!rounded-full !font-bold !shadow-lg !bg-gradient-to-r !from-yellow-400 !to-pink-400 hover:!from-pink-400 hover:!to-yellow-400"
+          className="mt-3 !rounded-full !font-bold !shadow-lg !bg-gradient-to-r !from-yellow-400 !to-pink-400 hover:!from-pink-400 hover:!to-yellow-400"
           onClick={() => navigate("/")}
         >
           Go Home &amp; Smile 😊

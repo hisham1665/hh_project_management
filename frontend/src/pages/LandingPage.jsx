@@ -291,7 +291,7 @@ export default function LandingPage() {
             variant="h5"
             className="!mb-8 !text-gray-700 text-center max-w-xl mx-auto"
           >
-            Welcome to ProjectFlow – the modern way to track, organize, and
+            Welcome to HH Project Manager – the modern way to track, organize, and
             collaborate on all your projects.
             <br />
             Stay on top of your work, hit your deadlines, and work as a team,
