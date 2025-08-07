@@ -1,29 +1,73 @@
 {
   
   "dependencies": {
-    "bcrypt": "^6.0.0",
-    "cors": "^2.8.5",
-    "dotenv": "^17.1.0",
-    "express": "^5.1.0",
-    "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.16.2",
-    "socket.io": "^4.8.1"
+  
+    
+  "@google/genai": "^1.13.0",
+  
+    
+  "@google/generative-ai": "^0.24.1",
+  
+    
+  "bcrypt": "^6.0.0",
+  
+    
+  "cors": "^2.8.5",
+  
+    
+  "dotenv": "^17.1.0",
+  
+    
+  "express": "^5.1.0",
+  
+    
+  "jsonwebtoken": "^9.0.2",
+  
+    
+  "mongoose": "^8.16.2",
+  
+    
+  "socket.io": "^4.8.1"
+  
   },
+  
   "name": "project-app",
+  
   "version": "1.0.0",
+  
   "type": "module",
+  
   "description": "it is a project manager app",
+  
   "main": "server.js",
+  
   "devDependencies": {
-    "eslint": "^9.30.1",
-    "nodemon": "^3.1.10",
-    "cross-env": "^7.0.3"
+  
+    
+  "cross-env": "^7.0.3",
+  
+    
+  "eslint": "^9.30.1",
+  
+    
+  "nodemon": "^3.1.10"
+  
   },
+  
   "scripts": {
-    "start": "cross-env NODE_ENV=production node backend/server.js",
-    "dev": "nodemon backend/server.js",
-    "build": "npm install && npm install --prefix frontend && npm run build --prefix frontend"
+  
+    
+  "start": "cross-env NODE_ENV=production node backend/server.js",
+  
+    
+  "dev": "nodemon backend/server.js",
+  
+    
+  "build": "npm install && npm install --prefix frontend && npm run build --prefix frontend"
+  
   },
+  
   "author": "Hisham",
+  
   "license": "ISC"
 }
