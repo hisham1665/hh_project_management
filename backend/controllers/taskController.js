@@ -183,3 +183,12 @@ export const postTaskComment = async (req, res) => {
   }
 };
 
+export const GenerateTasks = async (req, res) => {
+  const { name , description , numTasks } = req.body;
+  if (!name || !description || !numTasks) {
+    return res.status(400).json({ error: "Name, description, and number of tasks are required." });
+  }
+  
+  const task = await GenerateTasks(name, description, numTasks);
+  res.status(200).json({ task });
+};

@@ -41,6 +41,7 @@ function AddMembers({ project, onMembersEdited }) {
         const res = await axios.get(`/api/user/search?q=${query}`,{
           headers: { Authorization: `Bearer ${user.token}` },
         });
+        console.log('Search results:', res);
       setUsers(res.data || []);
     } catch (err) {
       console.error('Search failed:', err);
