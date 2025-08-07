@@ -1,7 +1,7 @@
 import Task from '../models/task.model.js';
 import Project from '../models/project.model.js';
 import User from '../models/user.model.js';
-
+import { GenerateTasksByAi } from '../AI_Controller/GenerateTasks.js';
 // ✅ Create a new task
 export const createTask = async (req, res) => {
   const { title, description,  priority, status , dueDate, createdBy , projectId, assignedTo } = req.body;
@@ -188,7 +188,12 @@ export const GenerateTasks = async (req, res) => {
   if (!name || !description || !numTasks) {
     return res.status(400).json({ error: "Name, description, and number of tasks are required." });
   }
-  
-  const task = await GenerateTasks(name, description, numTasks);
-  res.status(200).json({ task });
+  try{
+
+    const task =  GenerateTasksByAi(name, description, numTasks);
+    res.status(200).json( task );
+  } catch (error) {
+    console.error("Error generating tasks:", error);
+    res.status(500).json({ error: error.message });
+  }
 };

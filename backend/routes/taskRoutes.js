@@ -1,5 +1,5 @@
 import express from 'express';
-import { addTaskToProject, assignTask, createTask, deleteTask, getTasksByProject, updateTask, getTaskComments, postTaskComment } from '../controllers/taskController.js';
+import { addTaskToProject, assignTask, createTask, deleteTask, getTasksByProject, updateTask, getTaskComments, postTaskComment, GenerateTasks } from '../controllers/taskController.js';
 
 const Taskrouter = express.Router();
 
@@ -11,5 +11,5 @@ Taskrouter.post('/add-task/:projectId', addTaskToProject);
 Taskrouter.delete('/delete-task/:taskId', deleteTask);
 Taskrouter.get('/:taskId/comments', getTaskComments);
 Taskrouter.post('/:taskId/comments', postTaskComment);
-
+Taskrouter.post('/generate-tasks', GenerateTasks);
 export default Taskrouter;

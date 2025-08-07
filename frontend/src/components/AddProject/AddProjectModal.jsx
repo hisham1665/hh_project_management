@@ -145,6 +145,8 @@ export default function AddProjectModal({ open, handleClose,onSuccess }) {
             <TaskEntry
               tasks={projectData.tasks}
               onChange={(tasks) => setProjectData({ ...projectData, tasks })}
+              projectName={projectData.name}
+              projectDescription={projectData.description}
             />
           </motion.div>
         );

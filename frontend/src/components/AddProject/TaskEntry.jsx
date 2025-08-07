@@ -6,6 +6,7 @@ import {
   Box,
   Stack,
   Typography,
+  Button, // <-- Add this
 } from "@mui/material";
 import { AddCircle, Delete } from "@mui/icons-material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
@@ -17,9 +18,11 @@ import { useAuth } from "../../context/AuthContext";
 const priorities = ["low", "medium", "high", "very-high"];
 const statuses = ["todo", "in-progress", "done", "dropped"];
 
-export default function TaskEntry({ tasks, onChange }) {
+export default function TaskEntry({ tasks, onChange, projectName, projectDescription }) {
+  console.log("TaskEntry props:", {  projectName, projectDescription });
   const [userOptions, setUserOptions] = useState([]);
   const [loadingUser, setLoadingUser] = useState(false);
+  const [loadingAI, setLoadingAI] = useState(false);
   const {user} = useAuth();
   const handleTaskChange = (index, field, value) => {
     const updated = [...tasks];
@@ -59,6 +62,41 @@ export default function TaskEntry({ tasks, onChange }) {
       setUserOptions([]);
     } finally {
       setLoadingUser(false);
+    }
+  };
+
+  // AI Task Generation Handler
+  const handleAIGenerate = async () => {
+    if (!projectName || !projectDescription) {
+      alert("Please provide project name and description first.");
+      return;
+    }
+    setLoadingAI(true);
+    try {
+      console.log("TaskEntry props:", {  projectName, projectDescription });
+      const res = await axios.post(
+        "/api/task/generate-tasks",
+        { name: projectName, description: projectDescription, numTasks: 5 },
+        { headers: { Authorization: `Bearer ${user.token}` } }
+      );
+      console.log("AI Task Generation Response:", res.data);
+      // Expecting: [{title, description, priority}, ...]
+      if (Array.isArray(res.data)) {
+        const aiTasks = res.data.map((t) => ({
+          title: t.title || "",
+          description: t.description || "",
+          priority: t.priority || "medium",
+          status: "todo",
+          dueDate: new Date(),
+          createdBy: "",
+          assignedTo: user.id || null,
+        }));
+        onChange(aiTasks);
+      }
+    } catch (err) {
+      alert("AI task generation failed.");
+    } finally {
+      setLoadingAI(false);
     }
   };
 
@@ -169,7 +207,15 @@ export default function TaskEntry({ tasks, onChange }) {
         ))}
       </Box>
 
-      <Box display="flex" justifyContent="end" mt={3}>
+      <Box display="flex" justifyContent="space-between" mt={3}>
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={handleAIGenerate}
+          disabled={loadingAI}
+        >
+          {loadingAI ? "Generating..." : "Generate Tasks with AI"}
+        </Button>
         <IconButton onClick={addTask} color="primary">
          <span className="font-bold text-xl mr-3">Add Task</span> <AddCircle fontSize="large" /> 
         </IconButton>
